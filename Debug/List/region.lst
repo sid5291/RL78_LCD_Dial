@@ -1,0 +1,429 @@
+###############################################################################
+#                                                                             #
+# IAR C/C++ Compiler V1.30.5.50715 for RL78             17/Apr/2014  11:26:04 #
+# Copyright 2011-2013 IAR Systems AB.                                         #
+# Network license: ece-lic-19.ece.ncsu.edu (STD)                              #
+#                                                                             #
+#    Core         =  rl78_2                                                   #
+#    Code model   =  Near                                                     #
+#    Data model   =  Near                                                     #
+#                 =                                                           #
+#    Source file  =  D:\NCSU\Courses\ECE 561 Embedded System Design\Project   #
+#                    3\Project3\Project3\Project3Code\user_src\region.c       #
+#    Command line =  "D:\NCSU\Courses\ECE 561 Embedded System Design\Project  #
+#                    3\Project3\Project3\Project3Code\user_src\region.c"      #
+#                    --core rl78_2 --code_model near --data_model near        #
+#                    --near_const_location rom0 -o "D:\NCSU\Courses\ECE 561   #
+#                    Embedded System Design\Project                           #
+#                    3\Project3\Project3\Project3Code\Debug\Obj\"             #
+#                    --dlib_config "C:\Program Files (x86)\IAR                #
+#                    Systems\Embedded Workbench 6.5\rl78\LIB\dlrl78nn2n.h"    #
+#                    -e -Ohs --no_crosscall --debug -lCN                      #
+#                    "D:\NCSU\Courses\ECE 561 Embedded System Design\Project  #
+#                    3\Project3\Project3\Project3Code\Debug\List\" -I         #
+#                    "D:\NCSU\Courses\ECE 561 Embedded System Design\Project  #
+#                    3\Project3\Project3\Project3Code/applilet3_src/\" -I     #
+#                    "D:\NCSU\Courses\ECE 561 Embedded System Design\Project  #
+#                    3\Project3\Project3\Project3Code/Glyph/\" -I             #
+#                    "D:\NCSU\Courses\ECE 561 Embedded System Design\Project  #
+#                    3\Project3\Project3\Project3Code/Glyph/Drivers/\" -I     #
+#                    "D:\NCSU\Courses\ECE 561 Embedded System Design\Project  #
+#                    3\Project3\Project3\Project3Code/user_include/\" -I      #
+#                    "D:\NCSU\Courses\ECE 561 Embedded System Design\Project  #
+#                    3\Project3\Project3\Project3Code/RTC/\"                  #
+#                    --no_size_constraints                                    #
+#    List file    =  D:\NCSU\Courses\ECE 561 Embedded System Design\Project   #
+#                    3\Project3\Project3\Project3Code\Debug\List\region.lst   #
+#    Object file  =  D:\NCSU\Courses\ECE 561 Embedded System Design\Project   #
+#                    3\Project3\Project3\Project3Code\Debug\Obj\region.r87    #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+D:\NCSU\Courses\ECE 561 Embedded System Design\Project 3\Project3\Project3\Project3Code\user_src\region.c
+      1          // Automatically generated file. Do not edit if you plan to regenerate it.
+      2          
+      3          #include "region.h"
+
+   \                                 In  segment NEAR_CONST, align 2
+      4          const REGION_T RegionTable[] = {
+   \                     RegionTable:
+   \   000000 D8001801              DW 216, 280
+   \   000004 485753444956          DB "HWSDIV_16_16_16"
+   \   000014 1A015801              DW 282, 344
+   \   000018 4857534D4F44          DB "HWSMOD_16_16_16"
+   \   000028 5A010602              DW 346, 518
+   \   00002C 485753444956          DB "HWSDIV_32_32_32"
+   \   00003C 08021E02              DW 520, 542
+   \   000040 434847534947          DB "CHGSIGN_32"
+   \   00004B 0000000000            DB 0, 0, 0, 0, 0
+   \   000050 8E490C4A              DW 18830, 18956
+   \   000054 5350495F496E          DB "SPI_Init"
+   \   00005D 000000000000          DB 0, 0, 0, 0, 0, 0, 0
+   \   000064 0D4A934A              DW 18957, 19091
+   \   000068 5350495F5365          DB "SPI_Send"
+   \   000071 000000000000          DB 0, 0, 0, 0, 0, 0, 0
+   \   000078 994AAE4D              DW 19097, 19886
+   \   00007C 535437353739          DB "ST7579_Open"
+   \   000088 00000000              DB 0, 0, 0, 0
+   \   00008C AF4DB04D              DW 19887, 19888
+   \   000090 535437353739          DB "ST7579_Close"
+   \   00009D 000000                DB 0, 0, 0
+   \   0000A0 B14DCA57              DW 19889, 22474
+   \   0000A4 535437353739          DB "ST7579_Write"
+   \   0000B1 000000                DB 0, 0, 0
+   \   0000B4 D257C258              DW 22482, 22722
+   \   0000B8 535437353739          DB "ST7579_Read"
+   \   0000C4 00000000              DB 0, 0, 0, 0
+   \   0000C8 C358C758              DW 22723, 22727
+   \   0000CC 5952444B524C          DB "YRDKRL78_RSPIOp"
+   \   0000DC C858CD58              DW 22728, 22733
+   \   0000E0 5952444B524C          DB "YRDKRL78_Comman"
+   \   0000F0 E258EA58              DW 22754, 22762
+   \   0000F4 5952444B524C          DB "YRDKRL78_DataSe"
+   \   000104 EB585359              DW 22763, 22867
+   \   000108 4642475F496E          DB "FBG_InitFB"
+   \   000113 0000000000            DB 0, 0, 0, 0, 0
+   \   000118 5959C559              DW 22873, 22981
+   \   00011C 4642475F5265          DB "FBG_RefreshLCD_"
+   \   00012C C659EA5A              DW 22982, 23274
+   \   000130 4642475F5265          DB "FBG_RefreshLCD_"
+   \   000140 EB5A725B              DW 23275, 23410
+   \   000144 4642475F5365          DB "FBG_SetPixel"
+   \   000151 000000                DB 0, 0, 0
+   \   000154 735BD35B              DW 23411, 23507
+   \   000158 476C7970684F          DB "GlyphOpen"
+   \   000162 000000000000          DB 0, 0, 0, 0, 0, 0
+   \   000168 D45B005C              DW 23508, 23552
+   \   00016C 476C79706853          DB "GlyphSetXY"
+   \   000177 0000000000            DB 0, 0, 0, 0, 0
+   \   00017C 015C105C              DW 23553, 23568
+   \   000180 476C79706853          DB "GlyphSetFont"
+   \   00018D 000000                DB 0, 0, 0
+   \   000190 115C4F5C              DW 23569, 23631
+   \   000194 476C79706853          DB "GlyphString"
+   \   0001A0 00000000              DB 0, 0, 0, 0
+   \   0001A4 505C575C              DW 23632, 23639
+   \   0001A8 476C79706843          DB "GlyphClearScree"
+   \   0001B8 585C605C              DW 23640, 23648
+   \   0001BC 476C7970684E          DB "GlyphNormalScre"
+   \   0001CC 735CA95C              DW 23667, 23721
+   \   0001D0 476C79706843          DB "GlyphCommOpen"
+   \   0001DE 0000                  DB 0, 0
+   \   0001E0 AA5CD75C              DW 23722, 23767
+   \   0001E4 476C7970684C          DB "GlyphLCDOpen"
+   \   0001F1 000000                DB 0, 0, 0
+   \   0001F4 D85CFF5C              DW 23768, 23807
+   \   0001F8 4C4344496E69          DB "LCDInit"
+   \   000200 000000000000          DB 0, 0, 0, 0, 0, 0, 0, 0
+   \   000208 005D055D              DW 23808, 23813
+   \   00020C 4C4344436C65          DB "LCDClearScreen"
+   \   00021B 00                    DB 0
+   \   00021C 065D445D              DW 23814, 23876
+   \   000220 4C4344466F6E          DB "LCDFont"
+   \   000228 000000000000          DB 0, 0, 0, 0, 0, 0, 0, 0
+   \   000230 455D4C5D              DW 23877, 23884
+   \   000234 4C4344537472          DB "LCDString"
+   \   00023E 000000000000          DB 0, 0, 0, 0, 0, 0
+   \   000244 685DB85D              DW 23912, 23992
+   \   000248 4C4344507269          DB "LCDPrintf"
+   \   000252 000000000000          DB 0, 0, 0, 0, 0, 0
+   \   000258 B95DFD5D              DW 23993, 24061
+   \   00025C 496E69745F50          DB "Init_Profiling"
+   \   00026B 00                    DB 0
+   \   00026C FE5D015E              DW 24062, 24065
+   \   000270 44697361626C          DB "Disable_Profili"
+   \   000280 025E055E              DW 24066, 24069
+   \   000284 456E61626C65          DB "Enable_Profilin"
+   \   000294 065EBD5E              DW 24070, 24253
+   \   000298 5072696E745F          DB "Print_Results"
+   \   0002A6 0000                  DB 0, 0
+   \   0002A8 BE5E165F              DW 24254, 24342
+   \   0002AC 525F4144435F          DB "R_ADC_Create"
+   \   0002B9 000000                DB 0, 0, 0
+   \   0002BC 195F425F              DW 24345, 24386
+   \   0002C0 525F4347435F          DB "R_CGC_Create"
+   \   0002CD 000000                DB 0, 0, 0
+   \   0002D0 435F5C5F              DW 24387, 24412
+   \   0002D4 525F49545F43          DB "R_IT_Create"
+   \   0002E0 00000000              DB 0, 0, 0, 0
+   \   0002E4 5D5F695F              DW 24413, 24425
+   \   0002E8 525F49545F53          DB "R_IT_Start"
+   \   0002F3 0000000000            DB 0, 0, 0, 0, 0
+   \   0002F8 795FAB5F              DW 24441, 24491
+   \   0002FC 525F504F5254          DB "R_PORT_Create"
+   \   00030A 0000                  DB 0, 0
+   \   00030C AC5FCB5F              DW 24492, 24523
+   \   000310 525F53415531          DB "R_SAU1_Create"
+   \   00031E 0000                  DB 0, 0
+   \   000320 04601A60              DW 24580, 24602
+   \   000324 525F43534932          DB "R_CSI21_Create"
+   \   000333 00                    DB 0
+   \   000334 1B603C60              DW 24603, 24636
+   \   000338 525F43534932          DB "R_CSI21_Start"
+   \   000346 0000                  DB 0, 0
+   \   000348 3D607860              DW 24637, 24696
+   \   00034C 525F43534932          DB "R_CSI21_Send_Re"
+   \   00035C F9604961              DW 24825, 24905
+   \   000360 525F54415530          DB "R_TAU0_Create"
+   \   00036E 0000                  DB 0, 0
+   \   000370 4A615561              DW 24906, 24917
+   \   000374 525F54415530          DB "R_TAU0_Channel0"
+   \   000384 B7616662              DW 25015, 25190
+   \   000388 6D61696E00            DB "main"
+   \   00038D 000000000000          DB 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+   \   000398 6C629462              DW 25196, 25236
+   \   00039C 5F5F6C6F775F          DB "__low_level_ini"
+   \   0003AC 9562FC62              DW 25237, 25340
+   \   0003B0 7469636B5F74          DB "tick_timer_intr"
+   \   0003C0 FD62B866              DW 25341, 26296
+   \   0003C4 4C4344447261          DB "LCDDrawDialBack"
+   \   0003D4 B966456B              DW 26297, 27461
+   \   0003D8 447261774E65          DB "DrawNeedleFille"
+   \   0003E8 466B5276              DW 27462, 30290
+   \   0003EC 546573744D79          DB "TestMyCode"
+   \   0003F7 0000000000            DB 0, 0, 0, 0, 0
+   \   0003FC 53765576              DW 30291, 30293
+   \   000400 5F5F44656275          DB "__DebugBreak"
+   \   00040D 000000                DB 0, 0, 0
+   \   000410 56766576              DW 30294, 30309
+   \   000414 5F5F65786974          DB "__exit"
+   \   00041B 000000000000          DB 0, 0, 0, 0, 0, 0, 0, 0, 0
+   \   000424 1F021F02              DW 543, 543
+   \   000428 5F6578697400          DB "_exit"
+   \   00042E 000000000000          DB 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+   \   000438 24025202              DW 548, 594
+   \   00043C 3F435F535441          DB "?C_STARTUP"
+   \   000447 0000000000            DB 0, 0, 0, 0, 0
+   \   00044C 53026502              DW 595, 613
+   \   000450 5F5F494E4954          DB "__INIT_NEAR_Z"
+   \   00045E 0000                  DB 0, 0
+   \   000460 66027002              DW 614, 624
+   \   000464 5F5F494E4954          DB "__INIT_WRKSEG"
+   \   000472 0000                  DB 0, 0
+   \   000474 71028A02              DW 625, 650
+   \   000478 5F5F494E4954          DB "__INIT_NEAR_I"
+   \   000486 0000                  DB 0, 0
+   \   000488 8B029002              DW 651, 656
+   \   00048C 4063656E6400          DB "@cend"
+   \   000492 000000000000          DB 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+   \   00049C 66768176              DW 30310, 30337
+   \   0004A0 64697600              DB "div"
+   \   0004A4 000000000000          DB 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+   \   0004B0 82768476              DW 30338, 30340
+   \   0004B4 6578697400            DB "exit"
+   \   0004B9 000000000000          DB 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+   \   0004C4 9102EC04              DW 657, 1260
+   \   0004C8 3F465F414444          DB "?F_ADD"
+   \   0004CF 000000000000          DB 0, 0, 0, 0, 0, 0, 0, 0, 0
+   \   0004D8 ED043405              DW 1261, 1332
+   \   0004DC 3F46434D505F          DB "?FCMP_EQ"
+   \   0004E5 000000000000          DB 0, 0, 0, 0, 0, 0, 0
+   \   0004EC 35058105              DW 1333, 1409
+   \   0004F0 3F46434D505F          DB "?FCMP_LT"
+   \   0004F9 000000000000          DB 0, 0, 0, 0, 0, 0, 0
+   \   000500 8205F906              DW 1410, 1785
+   \   000504 3F465F444956          DB "?F_DIV"
+   \   00050B 000000000000          DB 0, 0, 0, 0, 0, 0, 0, 0, 0
+   \   000514 FA066407              DW 1786, 1892
+   \   000518 3F465F463253          DB "?F_F2SL"
+   \   000520 000000000000          DB 0, 0, 0, 0, 0, 0, 0, 0
+   \   000528 65077807              DW 1893, 1912
+   \   00052C 3F465F534C32          DB "?F_SL2F"
+   \   000534 000000000000          DB 0, 0, 0, 0, 0, 0, 0, 0
+   \   00053C 7907CD07              DW 1913, 1997
+   \   000540 3F465F554C32          DB "?F_UL2F"
+   \   000548 000000000000          DB 0, 0, 0, 0, 0, 0, 0, 0
+   \   000550 CE07D807              DW 1998, 2008
+   \   000554 5F5F6961725F          DB "__iar_norm_arg"
+   \   000563 00                    DB 0
+   \   000564 D9072D09              DW 2009, 2349
+   \   000568 3F465F4D554C          DB "?F_MUL"
+   \   00056F 000000000000          DB 0, 0, 0, 0, 0, 0, 0, 0, 0
+   \   000578 2E093909              DW 2350, 2361
+   \   00057C 3F495F4C5348          DB "?I_LSH_L02"
+   \   000587 0000000000            DB 0, 0, 0, 0, 0
+   \   00058C 3A094609              DW 2362, 2374
+   \   000590 3F53495F5253          DB "?SI_RSH_L02"
+   \   00059C 00000000              DB 0, 0, 0, 0
+   \   0005A0 47095209              DW 2375, 2386
+   \   0005A4 3F53495F434D          DB "?SI_CMP_L02"
+   \   0005B0 00000000              DB 0, 0, 0, 0
+   \   0005B4 53098509              DW 2387, 2437
+   \   0005B8 3F534C5F434D          DB "?SL_CMP_L03"
+   \   0005C4 00000000              DB 0, 0, 0, 0
+   \   0005C8 8609A409              DW 2438, 2468
+   \   0005CC 3F4C5F4E4547          DB "?L_NEG_L03"
+   \   0005D7 0000000000            DB 0, 0, 0, 0, 0
+   \   0005DC A509CD09              DW 2469, 2509
+   \   0005E0 3F465F4E4547          DB "?F_NEG_L04"
+   \   0005EB 0000000000            DB 0, 0, 0, 0, 0
+   \   0005F0 CE09ED09              DW 2510, 2541
+   \   0005F4 3F305346554E          DB "?0SFUNC_LEAVE_L"
+   \   000604 EE09FF09              DW 2542, 2559
+   \   000608 3F304546554E          DB "?0EFUNC_LEAVE_L"
+   \   000618 000A310A              DW 2560, 2609
+   \   00061C 3F30454D4F56          DB "?0EMOVE_LONG_L0"
+   \   00062C 320A480A              DW 2610, 2632
+   \   000630 3F30454C5F46          DB "?0EL_F_DEALLOC_"
+   \   000640 490A540A              DW 2633, 2644
+   \   000644 3F4D454D4350          DB "?MEMCPY_NEAR"
+   \   000651 000000                DB 0, 0, 0
+   \   000654 550A5C0A              DW 2645, 2652
+   \   000658 3F4D454D4350          DB "?MEMCPY_SMALL_N"
+   \   000668 85769976              DW 30341, 30361
+   \   00066C 5F5F6961725F          DB "__iar_Memchr"
+   \   000679 000000                DB 0, 0, 0
+   \   00067C 9A76A976              DW 30362, 30377
+   \   000680 5F5F6961725F          DB "__iar_Strchr"
+   \   00068D 000000                DB 0, 0, 0
+   \   000690 AA76B776              DW 30378, 30391
+   \   000694 7374726C656E          DB "strlen"
+   \   00069B 000000000000          DB 0, 0, 0, 0, 0, 0, 0, 0, 0
+   \   0006A4 B876E176              DW 30392, 30433
+   \   0006A8 76737072696E          DB "vsprintf"
+   \   0006B1 000000000000          DB 0, 0, 0, 0, 0, 0, 0
+   \   0006B8 E2763B77              DW 30434, 30523
+   \   0006BC 5F5F6961725F          DB "__iar_Dnorm"
+   \   0006C8 00000000              DB 0, 0, 0, 0
+   \   0006CC 3C779177              DW 30524, 30609
+   \   0006D0 5F5F6961725F          DB "__iar_Dunscale"
+   \   0006DF 00                    DB 0
+   \   0006E0 9277AF77              DW 30610, 30639
+   \   0006E4 5F5F6E656172          DB "__near_GetMemCh"
+   \   0006F4 B077CC7C              DW 30640, 31948
+   \   0006F8 5F5072696E74          DB "_PrintfLargeNoM"
+   \   000708 A885B385              DW 34216, 34227
+   \   00070C 5F5350726F75          DB "_SProut"
+   \   000714 000000000000          DB 0, 0, 0, 0, 0, 0, 0, 0
+   \   00071C B4857286              DW 34228, 34418
+   \   000720 5F5F6E656172          DB "__near_free"
+   \   00072C 00000000              DB 0, 0, 0, 0
+   \   000730 D6865787              DW 34518, 34647
+   \   000734 5F5F6E656172          DB "__near_malloc"
+   \   000742 0000                  DB 0, 0
+      5          	{0x000000D8, 0x00000118, "HWSDIV_16_16_16"}, 		//0
+      6          	{0x0000011A, 0x00000158, "HWSMOD_16_16_16"}, 		//1
+      7          	{0x0000015A, 0x00000206, "HWSDIV_32_32_32"}, 		//2
+      8          	{0x00000208, 0x0000021E, "CHGSIGN_32"}, 		//3
+      9          	{0x0000498E, 0x00004A0C, "SPI_Init"}, 		//4
+     10          	{0x00004A0D, 0x00004A93, "SPI_Send"}, 		//5
+     11          	{0x00004A99, 0x00004DAE, "ST7579_Open"}, 		//6
+     12          	{0x00004DAF, 0x00004DB0, "ST7579_Close"}, 		//7
+     13          	{0x00004DB1, 0x000057CA, "ST7579_Write"}, 		//8
+     14          	{0x000057D2, 0x000058C2, "ST7579_Read"}, 		//9
+     15          	{0x000058C3, 0x000058C7, "YRDKRL78_RSPIOp"}, 		//10
+     16          	{0x000058C8, 0x000058CD, "YRDKRL78_Comman"}, 		//11
+     17          	{0x000058E2, 0x000058EA, "YRDKRL78_DataSe"}, 		//12
+     18          	{0x000058EB, 0x00005953, "FBG_InitFB"}, 		//13
+     19          	{0x00005959, 0x000059C5, "FBG_RefreshLCD_"}, 		//14
+     20          	{0x000059C6, 0x00005AEA, "FBG_RefreshLCD_"}, 		//15
+     21          	{0x00005AEB, 0x00005B72, "FBG_SetPixel"}, 		//16
+     22          	{0x00005B73, 0x00005BD3, "GlyphOpen"}, 		//17
+     23          	{0x00005BD4, 0x00005C00, "GlyphSetXY"}, 		//18
+     24          	{0x00005C01, 0x00005C10, "GlyphSetFont"}, 		//19
+     25          	{0x00005C11, 0x00005C4F, "GlyphString"}, 		//20
+     26          	{0x00005C50, 0x00005C57, "GlyphClearScree"}, 		//21
+     27          	{0x00005C58, 0x00005C60, "GlyphNormalScre"}, 		//22
+     28          	{0x00005C73, 0x00005CA9, "GlyphCommOpen"}, 		//23
+     29          	{0x00005CAA, 0x00005CD7, "GlyphLCDOpen"}, 		//24
+     30          	{0x00005CD8, 0x00005CFF, "LCDInit"}, 		//25
+     31          	{0x00005D00, 0x00005D05, "LCDClearScreen"}, 		//26
+     32          	{0x00005D06, 0x00005D44, "LCDFont"}, 		//27
+     33          	{0x00005D45, 0x00005D4C, "LCDString"}, 		//28
+     34          	{0x00005D68, 0x00005DB8, "LCDPrintf"}, 		//29
+     35          	{0x00005DB9, 0x00005DFD, "Init_Profiling"}, 		//30
+     36          	{0x00005DFE, 0x00005E01, "Disable_Profili"}, 		//31
+     37          	{0x00005E02, 0x00005E05, "Enable_Profilin"}, 		//32
+     38          	{0x00005E06, 0x00005EBD, "Print_Results"}, 		//33
+     39          	{0x00005EBE, 0x00005F16, "R_ADC_Create"}, 		//34
+     40          	{0x00005F19, 0x00005F42, "R_CGC_Create"}, 		//35
+     41          	{0x00005F43, 0x00005F5C, "R_IT_Create"}, 		//36
+     42          	{0x00005F5D, 0x00005F69, "R_IT_Start"}, 		//37
+     43          	{0x00005F79, 0x00005FAB, "R_PORT_Create"}, 		//38
+     44          	{0x00005FAC, 0x00005FCB, "R_SAU1_Create"}, 		//39
+     45          	{0x00006004, 0x0000601A, "R_CSI21_Create"}, 		//40
+     46          	{0x0000601B, 0x0000603C, "R_CSI21_Start"}, 		//41
+     47          	{0x0000603D, 0x00006078, "R_CSI21_Send_Re"}, 		//42
+     48          	{0x000060F9, 0x00006149, "R_TAU0_Create"}, 		//43
+     49          	{0x0000614A, 0x00006155, "R_TAU0_Channel0"}, 		//44
+     50          	{0x000061B7, 0x00006266, "main"}, 		//45
+     51          	{0x0000626C, 0x00006294, "__low_level_ini"}, 		//46
+     52          	{0x00006295, 0x000062FC, "tick_timer_intr"}, 		//47
+     53          	{0x000062FD, 0x000066B8, "LCDDrawDialBack"}, 		//48
+     54          	{0x000066B9, 0x00006B45, "DrawNeedleFille"}, 		//49
+     55          	{0x00006B46, 0x00007652, "TestMyCode"}, 		//50
+     56          	{0x00007653, 0x00007655, "__DebugBreak"}, 		//51
+     57          	{0x00007656, 0x00007665, "__exit"}, 		//52
+     58          	{0x0000021F, 0x0000021F, "_exit"}, 		//53
+     59          	{0x00000224, 0x00000252, "?C_STARTUP"}, 		//54
+     60          	{0x00000253, 0x00000265, "__INIT_NEAR_Z"}, 		//55
+     61          	{0x00000266, 0x00000270, "__INIT_WRKSEG"}, 		//56
+     62          	{0x00000271, 0x0000028A, "__INIT_NEAR_I"}, 		//57
+     63          	{0x0000028B, 0x00000290, "@cend"}, 		//58
+     64          	{0x00007666, 0x00007681, "div"}, 		//59
+     65          	{0x00007682, 0x00007684, "exit"}, 		//60
+     66          	{0x00000291, 0x000004EC, "?F_ADD"}, 		//61
+     67          	{0x000004ED, 0x00000534, "?FCMP_EQ"}, 		//62
+     68          	{0x00000535, 0x00000581, "?FCMP_LT"}, 		//63
+     69          	{0x00000582, 0x000006F9, "?F_DIV"}, 		//64
+     70          	{0x000006FA, 0x00000764, "?F_F2SL"}, 		//65
+     71          	{0x00000765, 0x00000778, "?F_SL2F"}, 		//66
+     72          	{0x00000779, 0x000007CD, "?F_UL2F"}, 		//67
+     73          	{0x000007CE, 0x000007D8, "__iar_norm_arg"}, 		//68
+     74          	{0x000007D9, 0x0000092D, "?F_MUL"}, 		//69
+     75          	{0x0000092E, 0x00000939, "?I_LSH_L02"}, 		//70
+     76          	{0x0000093A, 0x00000946, "?SI_RSH_L02"}, 		//71
+     77          	{0x00000947, 0x00000952, "?SI_CMP_L02"}, 		//72
+     78          	{0x00000953, 0x00000985, "?SL_CMP_L03"}, 		//73
+     79          	{0x00000986, 0x000009A4, "?L_NEG_L03"}, 		//74
+     80          	{0x000009A5, 0x000009CD, "?F_NEG_L04"}, 		//75
+     81          	{0x000009CE, 0x000009ED, "?0SFUNC_LEAVE_L"}, 		//76
+     82          	{0x000009EE, 0x000009FF, "?0EFUNC_LEAVE_L"}, 		//77
+     83          	{0x00000A00, 0x00000A31, "?0EMOVE_LONG_L0"}, 		//78
+     84          	{0x00000A32, 0x00000A48, "?0EL_F_DEALLOC_"}, 		//79
+     85          	{0x00000A49, 0x00000A54, "?MEMCPY_NEAR"}, 		//80
+     86          	{0x00000A55, 0x00000A5C, "?MEMCPY_SMALL_N"}, 		//81
+     87          	{0x00007685, 0x00007699, "__iar_Memchr"}, 		//82
+     88          	{0x0000769A, 0x000076A9, "__iar_Strchr"}, 		//83
+     89          	{0x000076AA, 0x000076B7, "strlen"}, 		//84
+     90          	{0x000076B8, 0x000076E1, "vsprintf"}, 		//85
+     91          	{0x000076E2, 0x0000773B, "__iar_Dnorm"}, 		//86
+     92          	{0x0000773C, 0x00007791, "__iar_Dunscale"}, 		//87
+     93          	{0x00007792, 0x000077AF, "__near_GetMemCh"}, 		//88
+     94          	{0x000077B0, 0x00007CCC, "_PrintfLargeNoM"}, 		//89
+     95          	{0x000085A8, 0x000085B3, "_SProut"}, 		//90
+     96          	{0x000085B4, 0x00008672, "__near_free"}, 		//91
+     97          	{0x000086D6, 0x00008757, "__near_malloc"}, 		//92
+     98          };
+     99          
+
+   \                                 In  segment NEAR_CONST, align 2
+    100          const unsigned NumProfileRegions=93;
+   \                     NumProfileRegions:
+   \   000000 5D00                  DW 93
+
+   \                                 In  segment NEAR_Z, align 2, align-sorted
+    101          volatile unsigned RegionCount[93];
+   \                     RegionCount:
+   \   000000                       DS 186
+   \   0000BA                       REQUIRE __INIT_NEAR_Z
+
+
+   Segment part sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       2  NumProfileRegions
+     186  RegionCount
+    1860  RegionTable
+
+ 
+ 1 862 bytes in segment NEAR_CONST
+   186 bytes in segment NEAR_Z
+ 
+ 1 862 bytes of CONST memory
+   186 bytes of DATA  memory
+
+Errors: none
+Warnings: none

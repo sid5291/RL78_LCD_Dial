@@ -1,0 +1,561 @@
+###############################################################################
+#                                                                             #
+# IAR C/C++ Compiler V1.30.5.50715 for RL78             17/Apr/2014  11:25:52 #
+# Copyright 2011-2013 IAR Systems AB.                                         #
+# Network license: ece-lic-19.ece.ncsu.edu (STD)                              #
+#                                                                             #
+#    Core         =  rl78_2                                                   #
+#    Code model   =  Near                                                     #
+#    Data model   =  Near                                                     #
+#                 =                                                           #
+#    Source file  =  D:\NCSU\Courses\ECE 561 Embedded System Design\Project   #
+#                    3\Project3\Project3\Project3Code\Glyph\Drivers\lcd.c     #
+#    Command line =  "D:\NCSU\Courses\ECE 561 Embedded System Design\Project  #
+#                    3\Project3\Project3\Project3Code\Glyph\Drivers\lcd.c"    #
+#                    --core rl78_2 --code_model near --data_model near        #
+#                    --near_const_location rom0 -o "D:\NCSU\Courses\ECE 561   #
+#                    Embedded System Design\Project                           #
+#                    3\Project3\Project3\Project3Code\Debug\Obj\"             #
+#                    --dlib_config "C:\Program Files (x86)\IAR                #
+#                    Systems\Embedded Workbench 6.5\rl78\LIB\dlrl78nn2n.h"    #
+#                    -e -Ohs --no_crosscall --debug -lCN                      #
+#                    "D:\NCSU\Courses\ECE 561 Embedded System Design\Project  #
+#                    3\Project3\Project3\Project3Code\Debug\List\" -I         #
+#                    "D:\NCSU\Courses\ECE 561 Embedded System Design\Project  #
+#                    3\Project3\Project3\Project3Code/applilet3_src/\" -I     #
+#                    "D:\NCSU\Courses\ECE 561 Embedded System Design\Project  #
+#                    3\Project3\Project3\Project3Code/Glyph/\" -I             #
+#                    "D:\NCSU\Courses\ECE 561 Embedded System Design\Project  #
+#                    3\Project3\Project3\Project3Code/Glyph/Drivers/\" -I     #
+#                    "D:\NCSU\Courses\ECE 561 Embedded System Design\Project  #
+#                    3\Project3\Project3\Project3Code/user_include/\" -I      #
+#                    "D:\NCSU\Courses\ECE 561 Embedded System Design\Project  #
+#                    3\Project3\Project3\Project3Code/RTC/\"                  #
+#                    --no_size_constraints                                    #
+#    List file    =  D:\NCSU\Courses\ECE 561 Embedded System Design\Project   #
+#                    3\Project3\Project3\Project3Code\Debug\List\lcd.lst      #
+#    Object file  =  D:\NCSU\Courses\ECE 561 Embedded System Design\Project   #
+#                    3\Project3\Project3\Project3Code\Debug\Obj\lcd.r87       #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+D:\NCSU\Courses\ECE 561 Embedded System Design\Project 3\Project3\Project3\Project3Code\Glyph\Drivers\lcd.c
+      1          //#include <stdint.h>
+      2          #include <string.h>
+      3          #include <stdio.h>
+      4          #include <stdarg.h>
+      5          #include <math.h>
+      6          #include "glyph_api.h"
+      7          #include "ST7579_LCD.h"
+      8          #include "lcd.h"
+      9          #include "ior5f104pj.h"
+     10          #include "r_cg_userdefine.h"
+     11          
+     12          /*-------------------------------------------------------------------------*
+     13           * Globals
+     14           *-------------------------------------------------------------------------*/
+
+   \                                 In  segment NEAR_Z, align 2, align-sorted
+     15          static  T_glyphHandle  G_lcd;
+   \                     G_lcd:
+   \   000000                       DS 2
+   \   000002                       REQUIRE __INIT_NEAR_Z
+     16          
+
+   \                                 In  segment NEAR_I, align 1, align-sorted
+     17          uint8_t G_CharWidth = 5u;
+   \                     G_CharWidth:
+   \   000000                       DS 1
+   \   000001                       REQUIRE `?<Initializer for G_CharWidth>`
+   \   000001                       REQUIRE __INIT_NEAR_I
+
+   \                                 In  segment NEAR_I, align 1, align-sorted
+     18          uint8_t G_CharHeight = 7u;
+   \                     G_CharHeight:
+   \   000000                       DS 1
+   \   000001                       REQUIRE `?<Initializer for G_CharHeight>`
+   \   000001                       REQUIRE __INIT_NEAR_I
+     19          
+
+   \                                 In  segment CODE, align 1, keep-with-next
+     20          void LCDInit (void)
+   \                     LCDInit:
+     21          {
+   \   000000 C3                    PUSH      BC                 ;; 1 cycle
+     22              T_glyphError  err;
+     23          
+     24              err = GlyphOpen(&G_lcd, 0);
+     25              if (err == GLYPH_ERROR_NONE) {
+   \   000001 F7                    CLRW      BC                 ;; 1 cycle
+   \   000002 30....                MOVW      AX, #G_lcd         ;; 1 cycle
+   \   000005                       ; * Stack frame (at entry) *
+   \   000005                       ; Param size: 0
+   \   000005                       ; Auto size: 0
+   \   000005 FD....                CALL      GlyphOpen          ;; 3 cycles
+   \   000008 D1                    CMP0      A                  ;; 1 cycle
+   \   000009 DF1B                  BNZ       ??LCDInvert_0      ;; 4 cycles
+   \   00000B                       ; ------------------------------------- Block: 11 cycles
+     26                  GlyphNormalScreen(G_lcd);
+   \   00000B AF....                MOVW      AX, N:G_lcd        ;; 1 cycle
+   \   00000E FD....                CALL      GlyphNormalScreen  ;; 3 cycles
+     27                  GlyphClearScreen(G_lcd);
+   \   000011 AF....                MOVW      AX, N:G_lcd        ;; 1 cycle
+   \   000014 FD....                CALL      GlyphClearScreen   ;; 3 cycles
+     28          		LCDFont(FONT_LARGE);
+   \   000017 F3                    CLRB      B                  ;; 1 cycle
+   \   000018 AF....                MOVW      AX, N:G_lcd        ;; 1 cycle
+   \   00001B FD....                CALL      GlyphSetFont       ;; 3 cycles
+   \   00001E CF......              MOV       N:G_CharWidth, #0x8  ;; 1 cycle
+   \   000022 CF......              MOV       N:G_CharHeight, #0x8  ;; 1 cycle
+   \   000026                       ; ------------------------------------- Block: 15 cycles
+     29              }
+     30          }
+   \                     ??LCDInvert_0:
+   \   000026 C2                    POP       BC                 ;; 1 cycle
+   \   000027 D7                    RET                          ;; 6 cycles
+   \   000028                       ; ------------------------------------- Block: 7 cycles
+   \   000028                       ; ------------------------------------- Total: 33 cycles
+   \   000028                       REQUIRE ?CLRL78_V1_0_L00
+     31          
+     32          
+
+   \                                 In  segment CODE, align 1, keep-with-next
+     33          void LCDClearScreen (void)
+   \                     LCDClearScreen:
+     34          {
+     35              GlyphClearScreen(G_lcd);
+   \   000000 AF....                MOVW      AX, N:G_lcd        ;; 1 cycle
+   \   000003                       ; * Stack frame (at entry) *
+   \   000003                       ; Param size: 0
+   \   000003                       ; Auto size: 0
+   \   000003 ED....                BR        N:GlyphClearScreen  ;; 3 cycles
+   \   000006                       ; ------------------------------------- Block: 4 cycles
+   \   000006                       ; ------------------------------------- Total: 4 cycles
+   \   000006                       REQUIRE ?CLRL78_V1_0_L00
+     36          }
+     37          
+     38          
+
+   \                                 In  segment CODE, align 1, keep-with-next
+     39          void LCDFont (LCDFONT font)
+   \                     LCDFont:
+     40          {
+     41              switch (font) {
+   \   000000 D1                    CMP0      A                  ;; 1 cycle
+   \   000001 C3                    PUSH      BC                 ;; 1 cycle
+   \   000002 DD29                  BZ        ??LCDInvert_1      ;; 4 cycles
+   \   000004                       ; ------------------------------------- Block: 6 cycles
+   \   000004                       ; * Stack frame (at entry) *
+   \   000004                       ; Param size: 0
+   \   000004                       ; Auto size: 0
+   \   000004 91                    DEC       A                  ;; 1 cycle
+   \   000005 DD15                  BZ        ??LCDInvert_2      ;; 4 cycles
+   \   000007                       ; ------------------------------------- Block: 5 cycles
+   \   000007 91                    DEC       A                  ;; 1 cycle
+   \   000008 DF33                  BNZ       ??LCDInvert_3      ;; 4 cycles
+   \   00000A                       ; ------------------------------------- Block: 5 cycles
+     42              case FONT_LOGOS:
+     43          		GlyphSetFont(G_lcd, GLYPH_FONT_LOGOS);
+   \   00000A 5307                  MOV       B, #0x7            ;; 1 cycle
+   \   00000C AF....                MOVW      AX, N:G_lcd        ;; 1 cycle
+   \   00000F FD....                CALL      GlyphSetFont       ;; 3 cycles
+     44          		G_CharWidth = 16u;
+   \   000012 CF......              MOV       N:G_CharWidth, #0x10  ;; 1 cycle
+     45          		G_CharHeight = 16u;
+   \   000016 CF......              MOV       N:G_CharHeight, #0x10  ;; 1 cycle
+     46                 	break;
+   \   00001A EF21                  BR        S:??LCDInvert_3    ;; 3 cycles
+   \   00001C                       ; ------------------------------------- Block: 10 cycles
+     47          
+     48              case FONT_LARGE:
+     49                 	GlyphSetFont(G_lcd, GLYPH_FONT_8_BY_8);
+   \                     ??LCDInvert_2:
+   \   00001C F3                    CLRB      B                  ;; 1 cycle
+   \   00001D AF....                MOVW      AX, N:G_lcd        ;; 1 cycle
+   \   000020 FD....                CALL      GlyphSetFont       ;; 3 cycles
+     50          		G_CharWidth = 8u;
+   \   000023 CF......              MOV       N:G_CharWidth, #0x8  ;; 1 cycle
+     51          		G_CharHeight = 8u;
+   \   000027 CF......              MOV       N:G_CharHeight, #0x8  ;; 1 cycle
+     52                 	break;
+   \   00002B EF10                  BR        S:??LCDInvert_3    ;; 3 cycles
+   \   00002D                       ; ------------------------------------- Block: 10 cycles
+     53          
+     54              case FONT_SMALL:
+     55                 	GlyphSetFont(G_lcd, GLYPH_FONT_5_BY_7);
+   \                     ??LCDInvert_1:
+   \   00002D 5302                  MOV       B, #0x2            ;; 1 cycle
+   \   00002F AF....                MOVW      AX, N:G_lcd        ;; 1 cycle
+   \   000032 FD....                CALL      GlyphSetFont       ;; 3 cycles
+     56          		G_CharWidth = 5u;
+   \   000035 CF......              MOV       N:G_CharWidth, #0x5  ;; 1 cycle
+     57          		G_CharHeight = 7u;
+   \   000039 CF......              MOV       N:G_CharHeight, #0x7  ;; 1 cycle
+     58                 	break;
+   \   00003D                       ; ------------------------------------- Block: 7 cycles
+     59              }
+     60          }
+   \                     ??LCDInvert_3:
+   \   00003D C2                    POP       BC                 ;; 1 cycle
+   \   00003E D7                    RET                          ;; 6 cycles
+   \   00003F                       ; ------------------------------------- Block: 7 cycles
+   \   00003F                       ; ------------------------------------- Total: 50 cycles
+   \   00003F                       REQUIRE ?CLRL78_V1_0_L00
+     61          
+
+   \                                 In  segment CODE, align 1, keep-with-next
+     62          void LCDClearLine (uint8_t aLine)
+   \                     LCDClearLine:
+     63          {
+   \   000000 C3                    PUSH      BC                 ;; 1 cycle
+   \   000001 C5                    PUSH      DE                 ;; 1 cycle
+   \   000002 70                    MOV       X, A               ;; 1 cycle
+     64              uint8_t y = aLine * G_CharHeight;
+   \   000003 8F....                MOV       A, N:G_CharHeight  ;; 1 cycle
+   \   000006 D6                    MULU      X                  ;; 1 cycle
+   \   000007 60                    MOV       A, X               ;; 1 cycle
+   \   000008 74                    MOV       E, A               ;; 1 cycle
+     65              GlyphEraseBlock(G_lcd, 0u, y, 95u, y + 7u);
+   \   000009 F1                    CLRB      A                  ;; 1 cycle
+   \   00000A 040700                ADDW      AX, #0x7           ;; 1 cycle
+   \   00000D C1                    PUSH      AX                 ;; 1 cycle
+   \   00000E 305F00                MOVW      AX, #0x5F          ;; 1 cycle
+   \   000011 C1                    PUSH      AX                 ;; 1 cycle
+   \   000012 5500                  MOV       D, #0x0            ;; 1 cycle
+   \   000014 F7                    CLRW      BC                 ;; 1 cycle
+   \   000015 AF....                MOVW      AX, N:G_lcd        ;; 1 cycle
+   \   000018                       ; * Stack frame (at entry) *
+   \   000018                       ; Param size: 0
+   \   000018                       ; Auto size: 0
+   \   000018 FD....                CALL      GlyphEraseBlock    ;; 3 cycles
+     66          }
+   \   00001B C4                    POP       DE                 ;; 1 cycle
+   \   00001C C2                    POP       BC                 ;; 1 cycle
+   \   00001D D7                    RET                          ;; 6 cycles
+   \   00001E                       ; ------------------------------------- Block: 26 cycles
+   \   00001E                       ; ------------------------------------- Total: 26 cycles
+   \   00001E                       REQUIRE ?CLRL78_V1_0_L00
+     67          
+
+   \                                 In  segment CODE, align 1, keep-with-next
+     68          void LCDString (const char *aStr, uint8_t aX, uint8_t aY)
+   \                     LCDString:
+     69          {
+   \   000000 C5                    PUSH      DE                 ;; 1 cycle
+   \   000001 C1                    PUSH      AX                 ;; 1 cycle
+     70              GlyphSetXY (G_lcd, aX, aY);
+   \   000002 C3                    PUSH      BC                 ;; 1 cycle
+   \   000003 63                    MOV       A, B               ;; 1 cycle
+   \   000004 C4                    POP       DE                 ;; 1 cycle
+   \   000005 5500                  MOV       D, #0x0            ;; 1 cycle
+   \   000007 72                    MOV       C, A               ;; 1 cycle
+   \   000008                       ; ------------------------------------- Block: 7 cycles
+   \   000008                       ; ------------------------------------- Total: 7 cycles
+   \   000008                       REQUIRE ?CLRL78_V1_0_L00
+   \   000008                       REQUIRE ?Subroutine0
+   \   000008                       ; // Fall through to label ?Subroutine0
+     71              GlyphString(G_lcd, (uint8_t *)aStr, strlen(aStr));
+     72          }
+
+   \                                 In  segment CODE, align 1, keep-with-next
+   \                     ?Subroutine0:
+   \   000000 F3                    CLRB      B                  ;; 1 cycle
+   \   000001 AF....                MOVW      AX, N:G_lcd        ;; 1 cycle
+   \   000004                       ; * Stack frame (at entry) *
+   \   000004                       ; Param size: 0
+   \   000004                       ; Auto size: 2
+   \   000004                       ; * Stack frame (at entry) *
+   \   000004                       ; Param size: 0
+   \   000004                       ; Auto size: 2
+   \   000004 FD....                CALL      GlyphSetXY         ;; 3 cycles
+   \   000007 A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   000009 FD....                CALL      strlen             ;; 3 cycles
+   \   00000C 60                    MOV       A, X               ;; 1 cycle
+   \   00000D 75                    MOV       D, A               ;; 1 cycle
+   \   00000E A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   000010 12                    MOVW      BC, AX             ;; 1 cycle
+   \   000011 AF....                MOVW      AX, N:G_lcd        ;; 1 cycle
+   \   000014 FD....                CALL      GlyphString        ;; 3 cycles
+   \   000017 1002                  ADDW      SP, #0x2           ;; 1 cycle
+   \   000019 C4                    POP       DE                 ;; 1 cycle
+   \   00001A D7                    RET                          ;; 6 cycles
+   \   00001B                       ; ------------------------------------- Block: 25 cycles
+   \   00001B                       ; ------------------------------------- Total: 25 cycles
+   \   00001B                       REQUIRE ?CLRL78_V1_0_L00
+     73          
+
+   \                                 In  segment CODE, align 1, keep-with-next
+     74          void LCDStringPosLine (const char *aStr, uint8_t aPos, uint8_t aLine)
+   \                     LCDStringPosLine:
+     75          {
+   \   000000 C5                    PUSH      DE                 ;; 1 cycle
+   \   000001 C1                    PUSH      AX                 ;; 1 cycle
+     76              uint8_t  x = aPos  * G_CharWidth;
+     77          	uint8_t  y = aLine * G_CharHeight;
+     78          
+     79              LCDString(aStr, x, y);
+   \   000002 8F....                MOV       A, N:G_CharHeight  ;; 1 cycle
+   \   000005 70                    MOV       X, A               ;; 1 cycle
+   \   000006 62                    MOV       A, C               ;; 1 cycle
+   \   000007 D6                    MULU      X                  ;; 1 cycle
+   \   000008 60                    MOV       A, X               ;; 1 cycle
+   \   000009 14                    MOVW      DE, AX             ;; 1 cycle
+   \   00000A 8F....                MOV       A, N:G_CharWidth   ;; 1 cycle
+   \   00000D 70                    MOV       X, A               ;; 1 cycle
+   \   00000E 63                    MOV       A, B               ;; 1 cycle
+   \   00000F D6                    MULU      X                  ;; 1 cycle
+   \   000010 60                    MOV       A, X               ;; 1 cycle
+   \   000011 5500                  MOV       D, #0x0            ;; 1 cycle
+   \   000013 12                    MOVW      BC, AX             ;; 1 cycle
+   \   000014 ED....                BR        N:?Subroutine0     ;; 3 cycles
+   \   000017                       ; ------------------------------------- Block: 18 cycles
+   \   000017                       ; ------------------------------------- Total: 18 cycles
+   \   000017                       REQUIRE ?CLRL78_V1_0_L00
+     80          }
+     81          
+
+   \                                 In  segment CODE, align 1, keep-with-next
+     82          void LCDChar(char aChar, uint8_t aX, uint8_t aY)
+   \                     LCDChar:
+     83          {
+   \   000000 C5                    PUSH      DE                 ;; 1 cycle
+   \   000001 C1                    PUSH      AX                 ;; 1 cycle
+     84          	GlyphSetXY (G_lcd, aX, aY);
+   \   000002 C3                    PUSH      BC                 ;; 1 cycle
+   \   000003 63                    MOV       A, B               ;; 1 cycle
+   \   000004 C4                    POP       DE                 ;; 1 cycle
+   \   000005 5500                  MOV       D, #0x0            ;; 1 cycle
+   \   000007 72                    MOV       C, A               ;; 1 cycle
+   \   000008                       ; ------------------------------------- Block: 7 cycles
+   \   000008                       ; ------------------------------------- Total: 7 cycles
+   \   000008                       REQUIRE ?CLRL78_V1_0_L00
+   \   000008                       REQUIRE ?Subroutine1
+   \   000008                       ; // Fall through to label ?Subroutine1
+     85              GlyphChar(G_lcd, aChar);
+     86          }
+
+   \                                 In  segment CODE, align 1, keep-with-next
+   \                     ?Subroutine1:
+   \   000000 F3                    CLRB      B                  ;; 1 cycle
+   \   000001 AF....                MOVW      AX, N:G_lcd        ;; 1 cycle
+   \   000004                       ; * Stack frame (at entry) *
+   \   000004                       ; Param size: 0
+   \   000004                       ; Auto size: 2
+   \   000004                       ; * Stack frame (at entry) *
+   \   000004                       ; Param size: 0
+   \   000004                       ; Auto size: 2
+   \   000004 FD....                CALL      GlyphSetXY         ;; 3 cycles
+   \   000007 8801                  MOV       A, [SP+0x01]       ;; 1 cycle
+   \   000009 72                    MOV       C, A               ;; 1 cycle
+   \   00000A F3                    CLRB      B                  ;; 1 cycle
+   \   00000B AF....                MOVW      AX, N:G_lcd        ;; 1 cycle
+   \   00000E FD....                CALL      GlyphChar          ;; 3 cycles
+   \   000011 1002                  ADDW      SP, #0x2           ;; 1 cycle
+   \   000013 C4                    POP       DE                 ;; 1 cycle
+   \   000014 D7                    RET                          ;; 6 cycles
+   \   000015                       ; ------------------------------------- Block: 20 cycles
+   \   000015                       ; ------------------------------------- Total: 20 cycles
+   \   000015                       REQUIRE ?CLRL78_V1_0_L00
+     87          
+
+   \                                 In  segment CODE, align 1, keep-with-next
+     88          void LCDCharPosLine(char aChar, uint8_t aPos, uint8_t aLine)
+   \                     LCDCharPosLine:
+     89          {
+   \   000000 C5                    PUSH      DE                 ;; 1 cycle
+   \   000001 C1                    PUSH      AX                 ;; 1 cycle
+     90              uint8_t  x;
+     91              uint8_t  y;
+     92          
+     93              x = aPos  * G_CharWidth;
+     94              y = aLine * G_CharHeight;
+     95          
+     96          	LCDChar(aChar, x, y);
+   \   000002 8F....                MOV       A, N:G_CharHeight  ;; 1 cycle
+   \   000005 70                    MOV       X, A               ;; 1 cycle
+   \   000006 62                    MOV       A, C               ;; 1 cycle
+   \   000007 D6                    MULU      X                  ;; 1 cycle
+   \   000008 60                    MOV       A, X               ;; 1 cycle
+   \   000009 14                    MOVW      DE, AX             ;; 1 cycle
+   \   00000A 8F....                MOV       A, N:G_CharWidth   ;; 1 cycle
+   \   00000D 70                    MOV       X, A               ;; 1 cycle
+   \   00000E 63                    MOV       A, B               ;; 1 cycle
+   \   00000F D6                    MULU      X                  ;; 1 cycle
+   \   000010 60                    MOV       A, X               ;; 1 cycle
+   \   000011 5500                  MOV       D, #0x0            ;; 1 cycle
+   \   000013 12                    MOVW      BC, AX             ;; 1 cycle
+   \   000014 ED....                BR        N:?Subroutine1     ;; 3 cycles
+   \   000017                       ; ------------------------------------- Block: 18 cycles
+   \   000017                       ; ------------------------------------- Total: 18 cycles
+   \   000017                       REQUIRE ?CLRL78_V1_0_L00
+     97          }
+     98          
+
+   \                                 In  segment CODE, align 1, keep-with-next
+     99          void  LCDPrintf(uint8_t aLine, uint8_t aPos, char *aFormat, ...)
+   \                     LCDPrintf:
+    100          {
+   \   000000 C3                    PUSH      BC                 ;; 1 cycle
+   \   000001 2068                  SUBW      SP, #0x68          ;; 1 cycle
+   \   000003 72                    MOV       C, A               ;; 1 cycle
+   \   000004 C5                    PUSH      DE                 ;; 1 cycle
+    101              uint8_t  x, y;
+    102              char buffer[100];
+    103              va_list marker;
+    104          
+    105          	x = aPos * G_CharWidth;
+   \   000005 8F....                MOV       A, N:G_CharWidth   ;; 1 cycle
+   \   000008 70                    MOV       X, A               ;; 1 cycle
+   \   000009 63                    MOV       A, B               ;; 1 cycle
+   \   00000A C6                    POP       HL                 ;; 1 cycle
+   \   00000B D6                    MULU      X                  ;; 1 cycle
+   \   00000C 60                    MOV       A, X               ;; 1 cycle
+   \   00000D 9801                  MOV       [SP+0x01], A       ;; 1 cycle
+    106          	y = aLine * G_CharHeight;
+   \   00000F 8F....                MOV       A, N:G_CharHeight  ;; 1 cycle
+   \   000012 70                    MOV       X, A               ;; 1 cycle
+   \   000013 62                    MOV       A, C               ;; 1 cycle
+   \   000014 D6                    MULU      X                  ;; 1 cycle
+   \   000015 60                    MOV       A, X               ;; 1 cycle
+   \   000016 9800                  MOV       [SP], A            ;; 1 cycle
+    107          
+    108              // Convert to a string for output
+    109              va_start(marker, aFormat);
+   \   000018 AEF8                  MOVW      AX, SP             ;; 1 cycle
+   \   00001A 046E00                ADDW      AX, #0x6E          ;; 1 cycle
+   \   00001D B802                  MOVW      [SP+0x02], AX      ;; 1 cycle
+    110              vsprintf(buffer, aFormat, marker);
+   \   00001F C7                    PUSH      HL                 ;; 1 cycle
+   \   000020 14                    MOVW      DE, AX             ;; 1 cycle
+   \   000021 C2                    POP       BC                 ;; 1 cycle
+   \   000022 0496FF                ADDW      AX, #0xFF96        ;; 1 cycle
+   \   000025                       ; * Stack frame (at entry) *
+   \   000025                       ; Param size: 0
+   \   000025                       ; Auto size: 104
+   \   000025 FD....                CALL      vsprintf           ;; 3 cycles
+    111              va_end(marker);
+    112          
+    113              LCDString(buffer, x, y);
+   \   000028 8800                  MOV       A, [SP]            ;; 1 cycle
+   \   00002A 74                    MOV       E, A               ;; 1 cycle
+   \   00002B 8801                  MOV       A, [SP+0x01]       ;; 1 cycle
+   \   00002D 5500                  MOV       D, #0x0            ;; 1 cycle
+   \   00002F 72                    MOV       C, A               ;; 1 cycle
+   \   000030 F3                    CLRB      B                  ;; 1 cycle
+   \   000031 AF....                MOVW      AX, N:G_lcd        ;; 1 cycle
+   \   000034 FD....                CALL      GlyphSetXY         ;; 3 cycles
+   \   000037 AEF8                  MOVW      AX, SP             ;; 1 cycle
+   \   000039 040400                ADDW      AX, #0x4           ;; 1 cycle
+   \   00003C FD....                CALL      strlen             ;; 3 cycles
+   \   00003F 60                    MOV       A, X               ;; 1 cycle
+   \   000040 75                    MOV       D, A               ;; 1 cycle
+   \   000041 AEF8                  MOVW      AX, SP             ;; 1 cycle
+   \   000043 040400                ADDW      AX, #0x4           ;; 1 cycle
+   \   000046 12                    MOVW      BC, AX             ;; 1 cycle
+   \   000047 AF....                MOVW      AX, N:G_lcd        ;; 1 cycle
+   \   00004A FD....                CALL      GlyphString        ;; 3 cycles
+    114          }
+   \   00004D 1068                  ADDW      SP, #0x68          ;; 1 cycle
+   \   00004F C2                    POP       BC                 ;; 1 cycle
+   \   000050 D7                    RET                          ;; 6 cycles
+   \   000051                       ; ------------------------------------- Block: 59 cycles
+   \   000051                       ; ------------------------------------- Total: 59 cycles
+   \   000051                       REQUIRE ?CLRL78_V1_0_L00
+    115          
+
+   \                                 In  segment CODE, align 1, keep-with-next
+    116          void  LCDInvert()
+   \                     LCDInvert:
+    117          {
+    118          	GlyphInvertScreen(G_lcd);
+   \   000000 AF....                MOVW      AX, N:G_lcd        ;; 1 cycle
+   \   000003                       ; * Stack frame (at entry) *
+   \   000003                       ; Param size: 0
+   \   000003                       ; Auto size: 0
+   \   000003 ED....                BR        N:GlyphInvertScreen  ;; 3 cycles
+   \   000006                       ; ------------------------------------- Block: 4 cycles
+   \   000006                       ; ------------------------------------- Total: 4 cycles
+   \   000006                       REQUIRE ?CLRL78_V1_0_L00
+    119          }
+
+   \                                 In  segment NEAR_ID, align 1, align-sorted
+   \                     `?<Initializer for G_CharWidth>`:
+   \   000000 05                    DB 5
+
+   \                                 In  segment NEAR_ID, align 1, align-sorted
+   \                     `?<Initializer for G_CharHeight>`:
+   \   000000 07                    DB 7
+
+   Maximum stack usage in bytes:
+
+   CSTACK Function
+   ------ --------
+      4   LCDChar
+        4   -> GlyphChar
+        4   -> GlyphSetXY
+      4   LCDCharPosLine
+        4   -> GlyphChar
+        4   -> GlyphSetXY
+      8   LCDClearLine
+        8   -> GlyphEraseBlock
+      0   LCDClearScreen
+        0   -> GlyphClearScreen
+      2   LCDFont
+        2   -> GlyphSetFont
+      2   LCDInit
+        2   -> GlyphClearScreen
+        2   -> GlyphNormalScreen
+        2   -> GlyphOpen
+        2   -> GlyphSetFont
+      0   LCDInvert
+        0   -> GlyphInvertScreen
+    106   LCDPrintf
+      106   -> GlyphSetXY
+      106   -> GlyphString
+      106   -> strlen
+      106   -> vsprintf
+      4   LCDString
+        4   -> GlyphSetXY
+        4   -> GlyphString
+        4   -> strlen
+      4   LCDStringPosLine
+        4   -> GlyphSetXY
+        4   -> GlyphString
+        4   -> strlen
+
+
+   Segment part sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       1  ?<Initializer for G_CharHeight>
+       1  ?<Initializer for G_CharWidth>
+      27  ?Subroutine0
+      21  ?Subroutine1
+       1  G_CharHeight
+       1  G_CharWidth
+       2  G_lcd
+       8  LCDChar
+      23  LCDCharPosLine
+      30  LCDClearLine
+       6  LCDClearScreen
+      63  LCDFont
+      40  LCDInit
+       6  LCDInvert
+      81  LCDPrintf
+       8  LCDString
+      23  LCDStringPosLine
+
+ 
+ 336 bytes in segment CODE
+   2 bytes in segment NEAR_I
+   2 bytes in segment NEAR_ID
+   2 bytes in segment NEAR_Z
+ 
+ 336 bytes of CODE  memory
+   2 bytes of CONST memory
+   4 bytes of DATA  memory
+
+Errors: none
+Warnings: none

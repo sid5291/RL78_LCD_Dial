@@ -1,0 +1,260 @@
+###############################################################################
+#                                                                             #
+# IAR C/C++ Compiler V1.30.5.50715 for RL78             17/Apr/2014  11:25:58 #
+# Copyright 2011-2013 IAR Systems AB.                                         #
+# Network license: ece-lic-19.ece.ncsu.edu (STD)                              #
+#                                                                             #
+#    Core         =  rl78_2                                                   #
+#    Code model   =  Near                                                     #
+#    Data model   =  Near                                                     #
+#                 =                                                           #
+#    Source file  =  D:\NCSU\Courses\ECE 561 Embedded System Design\Project   #
+#                    3\Project3\Project3\Project3Code\user_src\tasks.c        #
+#    Command line =  "D:\NCSU\Courses\ECE 561 Embedded System Design\Project  #
+#                    3\Project3\Project3\Project3Code\user_src\tasks.c"       #
+#                    --core rl78_2 --code_model near --data_model near        #
+#                    --near_const_location rom0 -o "D:\NCSU\Courses\ECE 561   #
+#                    Embedded System Design\Project                           #
+#                    3\Project3\Project3\Project3Code\Debug\Obj\"             #
+#                    --dlib_config "C:\Program Files (x86)\IAR                #
+#                    Systems\Embedded Workbench 6.5\rl78\LIB\dlrl78nn2n.h"    #
+#                    -e -Ohs --no_crosscall --debug -lCN                      #
+#                    "D:\NCSU\Courses\ECE 561 Embedded System Design\Project  #
+#                    3\Project3\Project3\Project3Code\Debug\List\" -I         #
+#                    "D:\NCSU\Courses\ECE 561 Embedded System Design\Project  #
+#                    3\Project3\Project3\Project3Code/applilet3_src/\" -I     #
+#                    "D:\NCSU\Courses\ECE 561 Embedded System Design\Project  #
+#                    3\Project3\Project3\Project3Code/Glyph/\" -I             #
+#                    "D:\NCSU\Courses\ECE 561 Embedded System Design\Project  #
+#                    3\Project3\Project3\Project3Code/Glyph/Drivers/\" -I     #
+#                    "D:\NCSU\Courses\ECE 561 Embedded System Design\Project  #
+#                    3\Project3\Project3\Project3Code/user_include/\" -I      #
+#                    "D:\NCSU\Courses\ECE 561 Embedded System Design\Project  #
+#                    3\Project3\Project3\Project3Code/RTC/\"                  #
+#                    --no_size_constraints                                    #
+#    List file    =  D:\NCSU\Courses\ECE 561 Embedded System Design\Project   #
+#                    3\Project3\Project3\Project3Code\Debug\List\tasks.lst    #
+#    Object file  =  D:\NCSU\Courses\ECE 561 Embedded System Design\Project   #
+#                    3\Project3\Project3\Project3Code\Debug\Obj\tasks.r87     #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+D:\NCSU\Courses\ECE 561 Embedded System Design\Project 3\Project3\Project3\Project3Code\user_src\tasks.c
+      1          #include "r_cg_macrodriver.h"
+
+   \                                 In  segment SADDR_A, at 0xfff04
+   \   union <unnamed> volatile __saddr _A_P4
+   \                     _A_P4:
+   \   000000                       DS 1
+
+   \                                 In  segment SADDR_A, at 0xfff07
+   \   union <unnamed> volatile __saddr _A_P7
+   \                     _A_P7:
+   \   000000                       DS 1
+      2          #include "r_cg_userdefine.h"
+      3          
+      4          #include "profile.h"
+      5          #include "rtc_sched.h"
+      6          #include "lcd.h"
+      7          
+
+   \                                 In  segment CODE, align 1, keep-with-next
+      8          void Task1(void) {
+   \                     Task1:
+      9          	static char led_state=0;
+     10          
+     11          	LED_4_G = led_state;
+   \   000000 8F....                MOV       A, N:??led_state   ;; 1 cycle
+   \   000003 718C                  MOV1      CY, A.0            ;; 1 cycle
+   \   000005 36....                MOVW      HL, #??led_state   ;; 1 cycle
+   \   000008 712104                MOV1      S:0xFFF04.2, CY    ;; 2 cycles
+     12          	led_state ^= 1;
+   \   00000B E1                    ONEB      A                  ;; 1 cycle
+   \   00000C 7D                    XOR       A, [HL]            ;; 1 cycle
+   \   00000D 9B                    MOV       [HL], A            ;; 1 cycle
+     13          }
+   \   00000E D7                    RET                          ;; 6 cycles
+   \   00000F                       ; ------------------------------------- Block: 14 cycles
+   \   00000F                       ; ------------------------------------- Total: 14 cycles
+   \   00000F                       ; * Stack frame (at entry) *
+   \   00000F                       ; Param size: 0
+   \   00000F                       ; Auto size: 0
+   \   00000F                       REQUIRE ?CLRL78_V1_0_L00
+   \   00000F                       REQUIRE _A_P4
+
+   \                                 In  segment NEAR_Z, align 1, align-sorted
+   \                     ??led_state:
+   \   000000                       DS 1
+   \   000001                       REQUIRE __INIT_NEAR_Z
+     14          
+
+   \                                 In  segment CODE, align 1, keep-with-next
+     15          void Task2(void) {
+   \                     Task2:
+     16          	static char led_state=0;
+     17          
+     18          	LED_6_G = led_state;
+   \   000000 8F....                MOV       A, N:??led_state_1  ;; 1 cycle
+   \   000003 718C                  MOV1      CY, A.0            ;; 1 cycle
+   \   000005 36....                MOVW      HL, #??led_state_1  ;; 1 cycle
+   \   000008 713104                MOV1      S:0xFFF04.3, CY    ;; 2 cycles
+     19          	led_state ^= 1;
+   \   00000B E1                    ONEB      A                  ;; 1 cycle
+   \   00000C 7D                    XOR       A, [HL]            ;; 1 cycle
+   \   00000D 9B                    MOV       [HL], A            ;; 1 cycle
+     20          }
+   \   00000E D7                    RET                          ;; 6 cycles
+   \   00000F                       ; ------------------------------------- Block: 14 cycles
+   \   00000F                       ; ------------------------------------- Total: 14 cycles
+   \   00000F                       ; * Stack frame (at entry) *
+   \   00000F                       ; Param size: 0
+   \   00000F                       ; Auto size: 0
+   \   00000F                       REQUIRE ?CLRL78_V1_0_L00
+   \   00000F                       REQUIRE _A_P4
+
+   \                                 In  segment NEAR_Z, align 1, align-sorted
+   \                     ??led_state_1:
+   \   000000                       DS 1
+   \   000001                       REQUIRE __INIT_NEAR_Z
+     21          
+     22          // Task3 runs at 1 Hz, updates elapsed time on LCD
+
+   \                                 In  segment CODE, align 1, keep-with-next
+     23          void Task3(void) {
+   \                     Task3:
+   \   000000 C3                    PUSH      BC                 ;; 1 cycle
+   \   000001 C5                    PUSH      DE                 ;; 1 cycle
+     24          	static char led_state=0;
+     25          	static unsigned char m=0, s=0;
+     26          
+     27          	LED_8_G = led_state;
+   \   000002 36....                MOVW      HL, #??led_state_2  ;; 1 cycle
+   \   000005 7184                  MOV1      CY, [HL].0         ;; 1 cycle
+   \   000007 714104                MOV1      S:0xFFF04.4, CY    ;; 2 cycles
+     28          	led_state ^= 1;
+   \   00000A E1                    ONEB      A                  ;; 1 cycle
+   \   00000B 7D                    XOR       A, [HL]            ;; 1 cycle
+   \   00000C 9B                    MOV       [HL], A            ;; 1 cycle
+     29          
+     30          	s++;
+   \   00000D A0....                INC       N:??s              ;; 2 cycles
+     31          	if (s>59) {
+   \   000010 8F....                MOV       A, N:??s           ;; 1 cycle
+   \   000013 4C3C                  CMP       A, #0x3C           ;; 1 cycle
+   \   000015 DC06                  BC        ??Task3_0          ;; 4 cycles
+   \   000017                       ; ------------------------------------- Block: 17 cycles
+   \   000017                       ; * Stack frame (at entry) *
+   \   000017                       ; Param size: 0
+   \   000017                       ; Auto size: 0
+     32          		m++;
+   \   000017 A0....                INC       N:??m              ;; 2 cycles
+     33          		s = 0;
+   \   00001A F5....                CLRB      N:??s              ;; 1 cycle
+   \   00001D                       ; ------------------------------------- Block: 3 cycles
+     34          	}
+     35          
+     36          	if (!SW_1) {		// Display profile info if SW1 pressed
+   \                     ??Task3_0:
+   \   00001D 3162070D              BT        S:0xFFF07.6, ??Task3_1  ;; 5 cycles
+   \   000021                       ; ------------------------------------- Block: 5 cycles
+     37          		Disable_Profiling();
+   \   000021 FD....                CALL      Disable_Profiling  ;; 3 cycles
+     38          		Print_Results();
+   \   000024 FD....                CALL      Print_Results      ;; 3 cycles
+   \   000027                       ; ------------------------------------- Block: 6 cycles
+     39          		// hold until switch is released
+     40          		while (!SW_1)
+   \                     ??Task3_2:
+   \   000027 316407FC              BF        S:0xFFF07.6, ??Task3_2  ;; 5 cycles
+   \   00002B                       ; ------------------------------------- Block: 5 cycles
+     41          			;
+     42          		LCDClearScreen(); // erase screen
+   \   00002B FD....                CALL      LCDClearScreen     ;; 3 cycles
+   \   00002E                       ; ------------------------------------- Block: 3 cycles
+     43          	}
+     44          	LCDPrintf(2,0, "%02u:%02u", m, s);
+   \                     ??Task3_1:
+   \   00002E 8F....                MOV       A, N:??s           ;; 1 cycle
+   \   000031 70                    MOV       X, A               ;; 1 cycle
+   \   000032 F1                    CLRB      A                  ;; 1 cycle
+   \   000033 C1                    PUSH      AX                 ;; 1 cycle
+   \   000034 8F....                MOV       A, N:??m           ;; 1 cycle
+   \   000037 70                    MOV       X, A               ;; 1 cycle
+   \   000038 F1                    CLRB      A                  ;; 1 cycle
+   \   000039 C1                    PUSH      AX                 ;; 1 cycle
+   \   00003A 34....                MOVW      DE, #`?<Constant "%02u:%02u">`  ;; 1 cycle
+   \   00003D F3                    CLRB      B                  ;; 1 cycle
+   \   00003E 5102                  MOV       A, #0x2            ;; 1 cycle
+   \   000040 FD....                CALL      LCDPrintf          ;; 3 cycles
+     45          }
+   \   000043 1004                  ADDW      SP, #0x4           ;; 1 cycle
+   \   000045 C4                    POP       DE                 ;; 1 cycle
+   \   000046 C2                    POP       BC                 ;; 1 cycle
+   \   000047 D7                    RET                          ;; 6 cycles
+   \   000048                       ; ------------------------------------- Block: 23 cycles
+   \   000048                       ; ------------------------------------- Total: 62 cycles
+   \   000048                       REQUIRE ?CLRL78_V1_0_L00
+   \   000048                       REQUIRE _A_P4
+   \   000048                       REQUIRE _A_P7
+
+   \                                 In  segment NEAR_Z, align 1, align-sorted
+   \                     ??led_state_2:
+   \   000000                       DS 1
+   \   000001                       REQUIRE __INIT_NEAR_Z
+
+   \                                 In  segment NEAR_Z, align 1, align-sorted
+   \                     ??m:
+   \   000000                       DS 1
+   \   000001                       REQUIRE __INIT_NEAR_Z
+
+   \                                 In  segment NEAR_Z, align 1, align-sorted
+   \                     ??s:
+   \   000000                       DS 1
+   \   000001                       REQUIRE __INIT_NEAR_Z
+
+   \                                 In  segment NEAR_CONST, align 2
+   \                     `?<Constant "%02u:%02u">`:
+   \   000000 253032753A25          DB "%02u:%02u"
+
+   Maximum stack usage in bytes:
+
+   CSTACK Function
+   ------ --------
+      0   Task1
+      0   Task2
+      8   Task3
+        4   -> Disable_Profiling
+        4   -> LCDClearScreen
+        8   -> LCDPrintf
+        4   -> Print_Results
+
+
+   Segment part sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+      10  ?<Constant "%02u:%02u">
+      15  Task1
+      15  Task2
+      72  Task3
+       1  _A_P4
+       1  _A_P7
+       1  led_state
+       1  led_state
+       1  led_state
+       1  m
+       1  s
+
+ 
+ 102 bytes in segment CODE
+  10 bytes in segment NEAR_CONST
+   5 bytes in segment NEAR_Z
+   2 bytes in segment SADDR_A
+ 
+ 102 bytes of CODE  memory
+  10 bytes of CONST memory
+   5 bytes of DATA  memory (+ 2 bytes shared)
+
+Errors: none
+Warnings: none

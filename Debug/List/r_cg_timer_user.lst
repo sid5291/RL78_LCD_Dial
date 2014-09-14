@@ -1,0 +1,237 @@
+###############################################################################
+#                                                                             #
+# IAR C/C++ Compiler V1.30.5.50715 for RL78             17/Apr/2014  11:25:53 #
+# Copyright 2011-2013 IAR Systems AB.                                         #
+# Network license: ece-lic-19.ece.ncsu.edu (STD)                              #
+#                                                                             #
+#    Core         =  rl78_2                                                   #
+#    Code model   =  Near                                                     #
+#    Data model   =  Near                                                     #
+#                 =                                                           #
+#    Source file  =  D:\NCSU\Courses\ECE 561 Embedded System Design\Project   #
+#                    3\Project3\Project3\Project3Code\applilet3_src\r_cg_time #
+#                    r_user.c                                                 #
+#    Command line =  "D:\NCSU\Courses\ECE 561 Embedded System Design\Project  #
+#                    3\Project3\Project3\Project3Code\applilet3_src\r_cg_time #
+#                    r_user.c" --core rl78_2 --code_model near --data_model   #
+#                    near --near_const_location rom0 -o "D:\NCSU\Courses\ECE  #
+#                    561 Embedded System Design\Project                       #
+#                    3\Project3\Project3\Project3Code\Debug\Obj\"             #
+#                    --dlib_config "C:\Program Files (x86)\IAR                #
+#                    Systems\Embedded Workbench 6.5\rl78\LIB\dlrl78nn2n.h"    #
+#                    -e -Ohs --no_crosscall --debug -lCN                      #
+#                    "D:\NCSU\Courses\ECE 561 Embedded System Design\Project  #
+#                    3\Project3\Project3\Project3Code\Debug\List\" -I         #
+#                    "D:\NCSU\Courses\ECE 561 Embedded System Design\Project  #
+#                    3\Project3\Project3\Project3Code/applilet3_src/\" -I     #
+#                    "D:\NCSU\Courses\ECE 561 Embedded System Design\Project  #
+#                    3\Project3\Project3\Project3Code/Glyph/\" -I             #
+#                    "D:\NCSU\Courses\ECE 561 Embedded System Design\Project  #
+#                    3\Project3\Project3\Project3Code/Glyph/Drivers/\" -I     #
+#                    "D:\NCSU\Courses\ECE 561 Embedded System Design\Project  #
+#                    3\Project3\Project3\Project3Code/user_include/\" -I      #
+#                    "D:\NCSU\Courses\ECE 561 Embedded System Design\Project  #
+#                    3\Project3\Project3\Project3Code/RTC/\"                  #
+#                    --no_size_constraints                                    #
+#    List file    =  D:\NCSU\Courses\ECE 561 Embedded System Design\Project   #
+#                    3\Project3\Project3\Project3Code\Debug\List\r_cg_timer_u #
+#                    ser.lst                                                  #
+#    Object file  =  D:\NCSU\Courses\ECE 561 Embedded System Design\Project   #
+#                    3\Project3\Project3\Project3Code\Debug\Obj\r_cg_timer_us #
+#                    er.r87                                                   #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+D:\NCSU\Courses\ECE 561 Embedded System Design\Project 3\Project3\Project3\Project3Code\applilet3_src\r_cg_timer_user.c
+      1          /***********************************************************************************************************************
+      2          * DISCLAIMER
+      3          * This software is supplied by Renesas Electronics Corporation and is only 
+      4          * intended for use with Renesas products. No other uses are authorized. This 
+      5          * software is owned by Renesas Electronics Corporation and is protected under 
+      6          * all applicable laws, including copyright laws.
+      7          * THIS SOFTWARE IS PROVIDED "AS IS" AND RENESAS MAKES NO WARRANTIES REGARDING 
+      8          * THIS SOFTWARE, WHETHER EXPRESS, IMPLIED OR STATUTORY, INCLUDING BUT NOT 
+      9          * LIMITED TO WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE 
+     10          * AND NON-INFRINGEMENT.  ALL SUCH WARRANTIES ARE EXPRESSLY DISCLAIMED.
+     11          * TO THE MAXIMUM EXTENT PERMITTED NOT PROHIBITED BY LAW, NEITHER RENESAS 
+     12          * ELECTRONICS CORPORATION NOR ANY OF ITS AFFILIATED COMPANIES SHALL BE LIABLE 
+     13          * FOR ANY DIRECT, INDIRECT, SPECIAL, INCIDENTAL OR CONSEQUENTIAL DAMAGES FOR 
+     14          * ANY REASON RELATED TO THIS SOFTWARE, EVEN IF RENESAS OR ITS AFFILIATES HAVE 
+     15          * BEEN ADVISED OF THE POSSIBILITY OF SUCH DAMAGES.
+     16          * Renesas reserves the right, without notice, to make changes to this software 
+     17          * and to discontinue the availability of this software.  By using this software, 
+     18          * you agree to the additional terms and conditions found by accessing the 
+     19          * following link:
+     20          * http://www.renesas.com/disclaimer
+     21          *
+     22          * Copyright (C) 2011, 2013 Renesas Electronics Corporation. All rights reserved.
+     23          ***********************************************************************************************************************/
+     24          
+     25          /***********************************************************************************************************************
+     26          * File Name    : r_cg_timer_user.c
+     27          * Version      : Applilet3 for RL78/G14 V2.00.00.08 [12 Apr 2013]
+     28          * Device(s)    : R5F104PJ
+     29          * Tool-Chain   : IAR Systems iccrl78
+     30          * Description  : This file implements device driver for TAU module.
+     31          * Creation Date: 4/16/2014
+     32          ***********************************************************************************************************************/
+     33          
+     34          /***********************************************************************************************************************
+     35          Includes
+     36          ***********************************************************************************************************************/
+     37          #include "r_cg_macrodriver.h"
+     38          #include "r_cg_timer.h"
+     39          /* Start user code for include. Do not edit comment generated here */
+     40          
+     41          #include "profile.h"
+     42          #include "region.h"
+     43          
+     44          /* End user code. Do not edit comment generated here */
+     45          #include "r_cg_userdefine.h"
+     46          
+     47          /***********************************************************************************************************************
+     48          Global variables and functions
+     49          ***********************************************************************************************************************/
+     50          /* Start user code for global. Do not edit comment generated here */
+     51          /* End user code. Do not edit comment generated here */
+     52          
+     53          /***********************************************************************************************************************
+     54          * Function Name: r_tau0_channel0_interrupt
+     55          * Description  : This function is INTTM00 interrupt service routine.
+     56          * Arguments    : None
+     57          * Return Value : None
+     58          ***********************************************************************************************************************/
+     59          #pragma vector = INTTM00_vect
+
+   \                                 In  segment CODE, align 1, keep-with-next
+     60          __interrupt static void r_tau0_channel0_interrupt(void)
+   \                     r_tau0_channel0_interrupt:
+     61          {
+   \   000000 C1                    PUSH      AX                 ;; 1 cycle
+   \   000001 C3                    PUSH      BC                 ;; 1 cycle
+   \   000002 C5                    PUSH      DE                 ;; 1 cycle
+   \   000003 C7                    PUSH      HL                 ;; 1 cycle
+     62              /* Start user code. Do not edit comment generated here */
+     63          	unsigned int s, e;
+     64            	unsigned int i;
+     65          
+     66            	if (!profiling_enabled)
+   \   000004 D5....                CMP0      N:profiling_enabled  ;; 1 cycle
+   \   000007 DD52                  BZ        ??r_tau0_channel0_interrupt_0  ;; 4 cycles
+   \   000009                       ; ------------------------------------- Block: 9 cycles
+   \   000009                       ; * Stack frame (at entry) *
+   \   000009                       ; Param size: 0
+   \   000009                       ; Auto size: 0
+     67              	return;
+     68          
+     69            	profile_ticks++;
+   \   000009 DB....                MOVW      BC, N:profile_ticks+2  ;; 1 cycle
+   \   00000C AF....                MOVW      AX, N:profile_ticks  ;; 1 cycle
+   \   00000F 040100                ADDW      AX, #0x1           ;; 1 cycle
+   \   000012 61D8                  SKNC
+   \   000014 A3                    INCW      BC                 ;; 5 cycles
+   \   000015 BF....                MOVW      N:profile_ticks, AX  ;; 1 cycle
+   \   000018 13                    MOVW      AX, BC             ;; 1 cycle
+   \   000019 BF....                MOVW      N:profile_ticks+2, AX  ;; 1 cycle
+     70          
+     71          	// Read low 16 bits of return address from stack
+     72            	__asm("   PUSH  AX \n"
+     73          		"   MOVW  AX, [SP+10] ; AGD\n"
+     74                  "   MOVW  PC_val_low, AX\n"
+     75          		"   POP   AX \n");
+   \   00001C C1                    PUSH  AX 
+   \   00001D A80A                  MOVW  AX, [SP+10] ; AGD
+   \   00001F BF....                MOVW  PC_val_low, AX
+   \   000022 C0                    POP   AX 
+     76          
+     77            	/* look up function in table and increment counter  */
+     78            	for (i=0; i<NumProfileRegions; i++) {
+   \   000023 F7                    CLRW      BC                 ;; 1 cycle
+   \   000024 36....                MOVW      HL, #RegionTable   ;; 1 cycle
+   \   000027 EF06                  BR        S:??r_tau0_channel0_interrupt_1  ;; 3 cycles
+   \   000029                       ; ------------------------------------- Block: 17 cycles
+   \                     ??r_tau0_channel0_interrupt_2:
+   \   000029 17                    MOVW      AX, HL             ;; 1 cycle
+   \   00002A 041400                ADDW      AX, #0x14          ;; 1 cycle
+   \   00002D A3                    INCW      BC                 ;; 1 cycle
+   \   00002E 16                    MOVW      HL, AX             ;; 1 cycle
+   \   00002F                       ; ------------------------------------- Block: 4 cycles
+   \                     ??r_tau0_channel0_interrupt_1:
+   \   00002F AF....                MOVW      AX, N:NumProfileRegions  ;; 1 cycle
+   \   000032 43                    CMPW      AX, BC             ;; 1 cycle
+   \   000033 61D31C                BNH       ??r_tau0_channel0_interrupt_3  ;; 4 cycles
+   \   000036                       ; ------------------------------------- Block: 6 cycles
+     79          		s = RegionTable[i].Start;
+     80          		e = RegionTable[i].End;
+     81          		if ((PC_val_low >= s) && (PC_val_low <= e)) {
+   \   000036 AB                    MOVW      AX, [HL]           ;; 1 cycle
+   \   000037 EB....                MOVW      DE, N:PC_val_low   ;; 1 cycle
+   \   00003A 45                    CMPW      AX, DE             ;; 1 cycle
+   \   00003B 61C3EB                BH        ??r_tau0_channel0_interrupt_2  ;; 4 cycles
+   \   00003E                       ; ------------------------------------- Block: 7 cycles
+   \   00003E EB....                MOVW      DE, N:PC_val_low   ;; 1 cycle
+   \   000041 AC02                  MOVW      AX, [HL+0x02]      ;; 1 cycle
+   \   000043 45                    CMPW      AX, DE             ;; 1 cycle
+   \   000044 DCE3                  BC        ??r_tau0_channel0_interrupt_2  ;; 4 cycles
+   \   000046                       ; ------------------------------------- Block: 7 cycles
+     82                		RegionCount[i]++;
+   \   000046 311C                  SHLW      BC, 0x1            ;; 1 cycle
+   \   000048 13                    MOVW      AX, BC             ;; 1 cycle
+   \   000049 04....                ADDW      AX, #RegionCount   ;; 1 cycle
+   \   00004C 16                    MOVW      HL, AX             ;; 1 cycle
+   \   00004D AB                    MOVW      AX, [HL]           ;; 1 cycle
+   \   00004E A1                    INCW      AX                 ;; 1 cycle
+   \   00004F BB                    MOVW      [HL], AX           ;; 1 cycle
+     83                		return;
+   \   000050 EF09                  BR        S:??r_tau0_channel0_interrupt_0  ;; 3 cycles
+   \   000052                       ; ------------------------------------- Block: 10 cycles
+     84              	}
+     85            	}
+     86            	lost = PC_val_low;
+   \                     ??r_tau0_channel0_interrupt_3:
+   \   000052 AF....                MOVW      AX, N:PC_val_low   ;; 1 cycle
+   \   000055 BF....                MOVW      N:lost, AX         ;; 1 cycle
+     87          	num_lost++;
+   \   000058 A2....                INCW      N:num_lost         ;; 2 cycles
+     88              /* End user code. Do not edit comment generated here */
+     89          }
+   \   00005B                       ; ------------------------------------- Block: 4 cycles
+   \                     ??r_tau0_channel0_interrupt_0:
+   \   00005B C6                    POP       HL                 ;; 1 cycle
+   \   00005C C4                    POP       DE                 ;; 1 cycle
+   \   00005D C2                    POP       BC                 ;; 1 cycle
+   \   00005E C0                    POP       AX                 ;; 1 cycle
+   \   00005F 61FC                  RETI                         ;; 6 cycles
+   \   000061                       ; ------------------------------------- Block: 10 cycles
+   \   000061                       ; ------------------------------------- Total: 74 cycles
+   \   000061                       REQUIRE ?CLRL78_V1_0_L00
+
+   \                                 In  segment INTVEC, offset 0x2c, root
+   \   00002C ....                  DW r_tau0_channel0_interrupt
+     90          
+     91          /* Start user code for adding. Do not edit comment generated here */
+     92          /* End user code. Do not edit comment generated here */
+
+   Maximum stack usage in bytes:
+
+   CSTACK Function
+   ------ --------
+      8   r_tau0_channel0_interrupt
+
+
+   Segment part sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       2  ??r_tau0_channel0_interrupt??INTVEC 44
+      97  r_tau0_channel0_interrupt
+
+ 
+ 97 bytes in segment CODE
+  2 bytes in segment INTVEC
+ 
+ 97 bytes of CODE memory (+ 2 bytes shared)
+
+Errors: none
+Warnings: none

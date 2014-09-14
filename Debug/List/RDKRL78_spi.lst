@@ -1,0 +1,666 @@
+###############################################################################
+#                                                                             #
+# IAR C/C++ Compiler V1.30.5.50715 for RL78             17/Apr/2014  11:25:48 #
+# Copyright 2011-2013 IAR Systems AB.                                         #
+# Network license: ece-lic-19.ece.ncsu.edu (STD)                              #
+#                                                                             #
+#    Core         =  rl78_2                                                   #
+#    Code model   =  Near                                                     #
+#    Data model   =  Near                                                     #
+#                 =                                                           #
+#    Source file  =  D:\NCSU\Courses\ECE 561 Embedded System Design\Project   #
+#                    3\Project3\Project3\Project3Code\Glyph\Drivers\RDKRL78_s #
+#                    pi.c                                                     #
+#    Command line =  "D:\NCSU\Courses\ECE 561 Embedded System Design\Project  #
+#                    3\Project3\Project3\Project3Code\Glyph\Drivers\RDKRL78_s #
+#                    pi.c" --core rl78_2 --code_model near --data_model near  #
+#                    --near_const_location rom0 -o "D:\NCSU\Courses\ECE 561   #
+#                    Embedded System Design\Project                           #
+#                    3\Project3\Project3\Project3Code\Debug\Obj\"             #
+#                    --dlib_config "C:\Program Files (x86)\IAR                #
+#                    Systems\Embedded Workbench 6.5\rl78\LIB\dlrl78nn2n.h"    #
+#                    -e -Ohs --no_crosscall --debug -lCN                      #
+#                    "D:\NCSU\Courses\ECE 561 Embedded System Design\Project  #
+#                    3\Project3\Project3\Project3Code\Debug\List\" -I         #
+#                    "D:\NCSU\Courses\ECE 561 Embedded System Design\Project  #
+#                    3\Project3\Project3\Project3Code/applilet3_src/\" -I     #
+#                    "D:\NCSU\Courses\ECE 561 Embedded System Design\Project  #
+#                    3\Project3\Project3\Project3Code/Glyph/\" -I             #
+#                    "D:\NCSU\Courses\ECE 561 Embedded System Design\Project  #
+#                    3\Project3\Project3\Project3Code/Glyph/Drivers/\" -I     #
+#                    "D:\NCSU\Courses\ECE 561 Embedded System Design\Project  #
+#                    3\Project3\Project3\Project3Code/user_include/\" -I      #
+#                    "D:\NCSU\Courses\ECE 561 Embedded System Design\Project  #
+#                    3\Project3\Project3\Project3Code/RTC/\"                  #
+#                    --no_size_constraints                                    #
+#    List file    =  D:\NCSU\Courses\ECE 561 Embedded System Design\Project   #
+#                    3\Project3\Project3\Project3Code\Debug\List\RDKRL78_spi. #
+#                    lst                                                      #
+#    Object file  =  D:\NCSU\Courses\ECE 561 Embedded System Design\Project   #
+#                    3\Project3\Project3\Project3Code\Debug\Obj\RDKRL78_spi.r #
+#                    87                                                       #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+D:\NCSU\Courses\ECE 561 Embedded System Design\Project 3\Project3\Project3\Project3Code\Glyph\Drivers\RDKRL78_spi.c
+      1          // RDKRL78_spi.c
+      2          #include <stdbool.h>
+      3          #include "r_cg_macrodriver.h"
+
+   \                                 In  segment SADDR_A, at 0xfff0d
+   \   union <unnamed> volatile __saddr _A_P13
+   \                     _A_P13:
+   \   000000                       DS 1
+
+   \                                 In  segment SADDR_A, at 0xfff0e
+   \   union <unnamed> volatile __saddr _A_P14
+   \                     _A_P14:
+   \   000000                       DS 1
+      4          #include "r_cg_userdefine.h"
+      5          #include "r_cg_serial.h"
+      6          #include "r_cg_it.h"
+      7          #include "RDKRL78_spi.h"
+      8          
+      9          extern volatile uint8_t G_SPI_SendingData; //spi busy flag
+     10          extern volatile uint8_t G_SPI_ReceivingData; //spi busy flag
+     11          
+     12          #ifdef RDKRL78G13
+     13          unsigned char *SPI_CS_Port[] = {
+     14              (unsigned char *)&P1, // LCD-CS    P10
+     15              (unsigned char *)&P3, // SD-CS     P30
+     16              (unsigned char *)&P7, // PMOD1-CS  P71
+     17              (unsigned char *)&P7  // PMOD2-CS  P72
+     18          };
+     19          
+     20          uint8_t SPI_CS_Pin[] = {
+     21              0, // LCD-CS    P10
+     22              0, // SD-CS     P30
+     23              1, // PMOD1-CS  P71
+     24              2  // PMOD2-CS  P72
+     25          };
+     26          #endif
+     27          #ifdef RDKRL78G14
+
+   \                                 In  segment NEAR_I, align 2, align-sorted
+     28          unsigned char *SPI_CS_Port[] = {
+   \                     SPI_CS_Port:
+   \   000000                       DS 4
+   \   000004                       REQUIRE `?<Initializer for SPI_CS_Port>`
+   \   000004                       REQUIRE __INIT_NEAR_I
+     29              (unsigned char *)&P14, // LCD-CS    P145
+     30              (unsigned char *)&P14, // SD-CS     P142
+     31          };
+     32          
+
+   \                                 In  segment NEAR_I, align 2, align-sorted
+     33          uint8_t SPI_CS_Pin[] = {
+   \                     SPI_CS_Pin:
+   \   000000                       DS 2
+   \   000002                       REQUIRE `?<Initializer for SPI_CS_Pin>`
+   \   000002                       REQUIRE __INIT_NEAR_I
+     34              5, // LCD-CS    P145
+     35              2, // SD-CS     P142
+     36          };
+     37          #endif
+     38          
+     39          
+     40          void IO_Reset();
+     41          
+
+   \                                 In  segment CODE, align 1, keep-with-next
+     42          void SPI_Init()
+   \                     SPI_Init:
+     43          {
+   \   000000 C1                    PUSH      AX                 ;; 1 cycle
+     44              IO_Reset();
+   \   000001 F6                    CLRW      AX                 ;; 1 cycle
+   \   000002 B800                  MOVW      [SP], AX           ;; 1 cycle
+   \   000004 71020D                SET1      S:0xFFF0D.0        ;; 2 cycles
+   \   000007 B800                  MOVW      [SP], AX           ;; 1 cycle
+   \   000009 A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   00000B 7C80                  XOR       A, #0x80           ;; 1 cycle
+   \   00000D 4410A7                CMPW      AX, #0xA710        ;; 1 cycle
+   \   000010 DE2A                  BNC       ??SPI_SendReceive_0  ;; 4 cycles
+   \   000012                       ; ------------------------------------- Block: 13 cycles
+   \   000012                       ; * Stack frame (at entry) *
+   \   000012                       ; Param size: 0
+   \   000012                       ; Auto size: 2
+   \                     ??SPI_Init_0:
+   \   000012 A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   000014 A1                    INCW      AX                 ;; 1 cycle
+   \   000015 B800                  MOVW      [SP], AX           ;; 1 cycle
+   \   000017 A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   000019 7C80                  XOR       A, #0x80           ;; 1 cycle
+   \   00001B 4410A7                CMPW      AX, #0xA710        ;; 1 cycle
+   \   00001E DE1C                  BNC       ??SPI_SendReceive_0  ;; 4 cycles
+   \   000020                       ; ------------------------------------- Block: 10 cycles
+   \   000020 A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   000022 A1                    INCW      AX                 ;; 1 cycle
+   \   000023 B800                  MOVW      [SP], AX           ;; 1 cycle
+   \   000025 A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   000027 7C80                  XOR       A, #0x80           ;; 1 cycle
+   \   000029 4410A7                CMPW      AX, #0xA710        ;; 1 cycle
+   \   00002C DE0E                  BNC       ??SPI_SendReceive_0  ;; 4 cycles
+   \   00002E                       ; ------------------------------------- Block: 10 cycles
+   \   00002E A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   000030 A1                    INCW      AX                 ;; 1 cycle
+   \   000031 B800                  MOVW      [SP], AX           ;; 1 cycle
+   \   000033 A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   000035 7C80                  XOR       A, #0x80           ;; 1 cycle
+   \   000037 4410A7                CMPW      AX, #0xA710        ;; 1 cycle
+   \   00003A DCD6                  BC        ??SPI_Init_0       ;; 4 cycles
+   \   00003C                       ; ------------------------------------- Block: 10 cycles
+   \                     ??SPI_SendReceive_0:
+   \   00003C 8D0D                  MOV       A, S:0xFFF0D       ;; 1 cycle
+   \   00003E F40D                  CLRB      S:0xFFF0D          ;; 1 cycle
+   \   000040 F6                    CLRW      AX                 ;; 1 cycle
+   \   000041 B800                  MOVW      [SP], AX           ;; 1 cycle
+   \   000043 A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   000045 7C80                  XOR       A, #0x80           ;; 1 cycle
+   \   000047 4410A7                CMPW      AX, #0xA710        ;; 1 cycle
+   \   00004A DE2A                  BNC       ??SPI_SendReceive_1  ;; 4 cycles
+   \   00004C                       ; ------------------------------------- Block: 11 cycles
+   \                     ??SPI_Init_1:
+   \   00004C A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   00004E A1                    INCW      AX                 ;; 1 cycle
+   \   00004F B800                  MOVW      [SP], AX           ;; 1 cycle
+   \   000051 A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   000053 7C80                  XOR       A, #0x80           ;; 1 cycle
+   \   000055 4410A7                CMPW      AX, #0xA710        ;; 1 cycle
+   \   000058 DE1C                  BNC       ??SPI_SendReceive_1  ;; 4 cycles
+   \   00005A                       ; ------------------------------------- Block: 10 cycles
+   \   00005A A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   00005C A1                    INCW      AX                 ;; 1 cycle
+   \   00005D B800                  MOVW      [SP], AX           ;; 1 cycle
+   \   00005F A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   000061 7C80                  XOR       A, #0x80           ;; 1 cycle
+   \   000063 4410A7                CMPW      AX, #0xA710        ;; 1 cycle
+   \   000066 DE0E                  BNC       ??SPI_SendReceive_1  ;; 4 cycles
+   \   000068                       ; ------------------------------------- Block: 10 cycles
+   \   000068 A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   00006A A1                    INCW      AX                 ;; 1 cycle
+   \   00006B B800                  MOVW      [SP], AX           ;; 1 cycle
+   \   00006D A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   00006F 7C80                  XOR       A, #0x80           ;; 1 cycle
+   \   000071 4410A7                CMPW      AX, #0xA710        ;; 1 cycle
+   \   000074 DCD6                  BC        ??SPI_Init_1       ;; 4 cycles
+   \   000076                       ; ------------------------------------- Block: 10 cycles
+     45          
+     46              CSI_CREATE();
+   \                     ??SPI_SendReceive_1:
+   \   000076 FD....                CALL      R_CSI21_Create     ;; 3 cycles
+     47              CSI_START();
+   \   000079 FD....                CALL      R_CSI21_Start      ;; 3 cycles
+     48          }
+   \   00007C 1002                  ADDW      SP, #0x2           ;; 1 cycle
+   \   00007E D7                    RET                          ;; 6 cycles
+   \   00007F                       ; ------------------------------------- Block: 13 cycles
+   \   00007F                       ; ------------------------------------- Total: 97 cycles
+   \   00007F                       REQUIRE ?CLRL78_V1_0_L00
+   \   00007F                       REQUIRE _A_P13
+     49          
+
+   \                                 In  segment CODE, align 1, keep-with-next
+     50          void IO_Reset()
+   \                     IO_Reset:
+     51          {
+   \   000000 C1                    PUSH      AX                 ;; 1 cycle
+     52              volatile int i = 0;
+   \   000001 F6                    CLRW      AX                 ;; 1 cycle
+   \   000002 B800                  MOVW      [SP], AX           ;; 1 cycle
+     53          
+     54          		//#warning RESET-IO must be inverted for actual HW
+     55          		RESET_IO_PORT |= (1<<RESET_IO_BIT_POS);
+   \   000004 71020D                SET1      S:0xFFF0D.0        ;; 2 cycles
+     56          		// P13 |= (1<<0); // Assert #RESET-IO
+     57              for (i=0;i<10000;i++)
+   \   000007 B800                  MOVW      [SP], AX           ;; 1 cycle
+   \   000009 A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   00000B 7C80                  XOR       A, #0x80           ;; 1 cycle
+   \   00000D 4410A7                CMPW      AX, #0xA710        ;; 1 cycle
+   \   000010 DE2A                  BNC       ??SPI_SendReceive_2  ;; 4 cycles
+   \   000012                       ; ------------------------------------- Block: 13 cycles
+   \   000012                       ; * Stack frame (at entry) *
+   \   000012                       ; Param size: 0
+   \   000012                       ; Auto size: 2
+   \                     ??IO_Reset_0:
+   \   000012 A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   000014 A1                    INCW      AX                 ;; 1 cycle
+   \   000015 B800                  MOVW      [SP], AX           ;; 1 cycle
+   \   000017 A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   000019 7C80                  XOR       A, #0x80           ;; 1 cycle
+   \   00001B 4410A7                CMPW      AX, #0xA710        ;; 1 cycle
+   \   00001E DE1C                  BNC       ??SPI_SendReceive_2  ;; 4 cycles
+   \   000020                       ; ------------------------------------- Block: 10 cycles
+   \   000020 A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   000022 A1                    INCW      AX                 ;; 1 cycle
+   \   000023 B800                  MOVW      [SP], AX           ;; 1 cycle
+   \   000025 A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   000027 7C80                  XOR       A, #0x80           ;; 1 cycle
+   \   000029 4410A7                CMPW      AX, #0xA710        ;; 1 cycle
+   \   00002C DE0E                  BNC       ??SPI_SendReceive_2  ;; 4 cycles
+   \   00002E                       ; ------------------------------------- Block: 10 cycles
+   \   00002E A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   000030 A1                    INCW      AX                 ;; 1 cycle
+   \   000031 B800                  MOVW      [SP], AX           ;; 1 cycle
+   \   000033 A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   000035 7C80                  XOR       A, #0x80           ;; 1 cycle
+   \   000037 4410A7                CMPW      AX, #0xA710        ;; 1 cycle
+   \   00003A DCD6                  BC        ??IO_Reset_0       ;; 4 cycles
+   \   00003C                       ; ------------------------------------- Block: 10 cycles
+     58          			;
+     59          		RESET_IO_PORT &= !(1<<RESET_IO_BIT_POS);
+   \                     ??SPI_SendReceive_2:
+   \   00003C 8D0D                  MOV       A, S:0xFFF0D       ;; 1 cycle
+   \   00003E F40D                  CLRB      S:0xFFF0D          ;; 1 cycle
+     60          		//    P13 &= ~(1<<0);  // Deassert #RESET-IO
+     61              for (i=0;i<10000;i++)
+   \   000040 F6                    CLRW      AX                 ;; 1 cycle
+   \   000041 B800                  MOVW      [SP], AX           ;; 1 cycle
+   \   000043 A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   000045 7C80                  XOR       A, #0x80           ;; 1 cycle
+   \   000047 4410A7                CMPW      AX, #0xA710        ;; 1 cycle
+   \   00004A DE2A                  BNC       ??SPI_SendReceive_3  ;; 4 cycles
+   \   00004C                       ; ------------------------------------- Block: 11 cycles
+   \                     ??IO_Reset_1:
+   \   00004C A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   00004E A1                    INCW      AX                 ;; 1 cycle
+   \   00004F B800                  MOVW      [SP], AX           ;; 1 cycle
+   \   000051 A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   000053 7C80                  XOR       A, #0x80           ;; 1 cycle
+   \   000055 4410A7                CMPW      AX, #0xA710        ;; 1 cycle
+   \   000058 DE1C                  BNC       ??SPI_SendReceive_3  ;; 4 cycles
+   \   00005A                       ; ------------------------------------- Block: 10 cycles
+   \   00005A A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   00005C A1                    INCW      AX                 ;; 1 cycle
+   \   00005D B800                  MOVW      [SP], AX           ;; 1 cycle
+   \   00005F A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   000061 7C80                  XOR       A, #0x80           ;; 1 cycle
+   \   000063 4410A7                CMPW      AX, #0xA710        ;; 1 cycle
+   \   000066 DE0E                  BNC       ??SPI_SendReceive_3  ;; 4 cycles
+   \   000068                       ; ------------------------------------- Block: 10 cycles
+   \   000068 A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   00006A A1                    INCW      AX                 ;; 1 cycle
+   \   00006B B800                  MOVW      [SP], AX           ;; 1 cycle
+   \   00006D A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   00006F 7C80                  XOR       A, #0x80           ;; 1 cycle
+   \   000071 4410A7                CMPW      AX, #0xA710        ;; 1 cycle
+   \   000074 DCD6                  BC        ??IO_Reset_1       ;; 4 cycles
+   \   000076                       ; ------------------------------------- Block: 10 cycles
+     62          			;
+     63          }
+   \                     ??SPI_SendReceive_3:
+   \   000076 1002                  ADDW      SP, #0x2           ;; 1 cycle
+   \   000078 D7                    RET                          ;; 6 cycles
+   \   000079                       ; ------------------------------------- Block: 7 cycles
+   \   000079                       ; ------------------------------------- Total: 91 cycles
+   \   000079                       REQUIRE ?CLRL78_V1_0_L00
+   \   000079                       REQUIRE _A_P13
+     64          
+
+   \                                 In  segment CODE, align 1, keep-with-next
+     65          void SPI_CS_Start(uint8_t aDevice)
+   \                     SPI_CS_Start:
+     66          {
+   \   000000 C3                    PUSH      BC                 ;; 1 cycle
+     67          	*SPI_CS_Port[aDevice] &= ~(1<<SPI_CS_Pin[aDevice]);
+   \   000001 73                    MOV       B, A               ;; 1 cycle
+   \   000002 70                    MOV       X, A               ;; 1 cycle
+   \   000003 09....                MOV       A, (SPI_CS_Pin & 0xFFFF)[B]  ;; 1 cycle
+   \   000006 360100                MOVW      HL, #0x1           ;; 1 cycle
+   \   000009 72                    MOV       C, A               ;; 1 cycle
+   \   00000A 37                    XCHW      AX, HL             ;; 1 cycle
+   \   00000B                       ; * Stack frame (at entry) *
+   \   00000B                       ; Param size: 0
+   \   00000B                       ; Auto size: 0
+   \   00000B FD....                CALL      N:?I_LSH_L02       ;; 3 cycles
+   \   00000E 37                    XCHW      AX, HL             ;; 1 cycle
+   \   00000F 66                    MOV       A, L               ;; 1 cycle
+   \   000010 7CFF                  XOR       A, #0xFF           ;; 1 cycle
+   \   000012 73                    MOV       B, A               ;; 1 cycle
+   \   000013 F1                    CLRB      A                  ;; 1 cycle
+   \   000014 01                    ADDW      AX, AX             ;; 1 cycle
+   \   000015 04....                ADDW      AX, #SPI_CS_Port   ;; 1 cycle
+   \   000018 16                    MOVW      HL, AX             ;; 1 cycle
+   \   000019 AB                    MOVW      AX, [HL]           ;; 1 cycle
+   \   00001A 16                    MOVW      HL, AX             ;; 1 cycle
+   \   00001B 63                    MOV       A, B               ;; 1 cycle
+   \   00001C 5D                    AND       A, [HL]            ;; 1 cycle
+   \   00001D 9B                    MOV       [HL], A            ;; 1 cycle
+     68          }
+   \   00001E C2                    POP       BC                 ;; 1 cycle
+   \   00001F D7                    RET                          ;; 6 cycles
+   \   000020                       ; ------------------------------------- Block: 30 cycles
+   \   000020                       ; ------------------------------------- Total: 30 cycles
+   \   000020                       REQUIRE ?CLRL78_V1_0_L00
+     69          
+
+   \                                 In  segment CODE, align 1, keep-with-next
+     70          void SPI_CS_End(uint8_t aDevice)
+   \                     SPI_CS_End:
+     71          {
+   \   000000 C3                    PUSH      BC                 ;; 1 cycle
+     72          	*SPI_CS_Port[aDevice] |= (1<<SPI_CS_Pin[aDevice]);
+   \   000001 73                    MOV       B, A               ;; 1 cycle
+   \   000002 70                    MOV       X, A               ;; 1 cycle
+   \   000003 09....                MOV       A, (SPI_CS_Pin & 0xFFFF)[B]  ;; 1 cycle
+   \   000006 360100                MOVW      HL, #0x1           ;; 1 cycle
+   \   000009 72                    MOV       C, A               ;; 1 cycle
+   \   00000A 37                    XCHW      AX, HL             ;; 1 cycle
+   \   00000B                       ; * Stack frame (at entry) *
+   \   00000B                       ; Param size: 0
+   \   00000B                       ; Auto size: 0
+   \   00000B FD....                CALL      N:?I_LSH_L02       ;; 3 cycles
+   \   00000E 37                    XCHW      AX, HL             ;; 1 cycle
+   \   00000F 66                    MOV       A, L               ;; 1 cycle
+   \   000010 73                    MOV       B, A               ;; 1 cycle
+   \   000011 F1                    CLRB      A                  ;; 1 cycle
+   \   000012 01                    ADDW      AX, AX             ;; 1 cycle
+   \   000013 04....                ADDW      AX, #SPI_CS_Port   ;; 1 cycle
+   \   000016 16                    MOVW      HL, AX             ;; 1 cycle
+   \   000017 AB                    MOVW      AX, [HL]           ;; 1 cycle
+   \   000018 16                    MOVW      HL, AX             ;; 1 cycle
+   \   000019 63                    MOV       A, B               ;; 1 cycle
+   \   00001A 6D                    OR        A, [HL]            ;; 1 cycle
+   \   00001B 9B                    MOV       [HL], A            ;; 1 cycle
+     73          }
+   \   00001C C2                    POP       BC                 ;; 1 cycle
+   \   00001D D7                    RET                          ;; 6 cycles
+   \   00001E                       ; ------------------------------------- Block: 29 cycles
+   \   00001E                       ; ------------------------------------- Total: 29 cycles
+   \   00001E                       REQUIRE ?CLRL78_V1_0_L00
+     74          
+
+   \                                 In  segment CODE, align 1, keep-with-next
+     75          void SPI_Send(uint8_t aDevice, uint8_t *aData, uint32_t aLength)
+   \                     SPI_Send:
+     76          {
+   \   000000 C5                    PUSH      DE                 ;; 1 cycle
+   \   000001 C3                    PUSH      BC                 ;; 1 cycle
+   \   000002 C1                    PUSH      AX                 ;; 1 cycle
+     77          	volatile uint16_t d;
+     78          
+     79              uint8_t noRXData;
+     80          	G_SPI_SendingData = 1;
+   \   000003 E5....                ONEB      N:G_SPI_SendingData  ;; 1 cycle
+     81          	G_SPI_ReceivingData = 0;
+   \   000006 73                    MOV       B, A               ;; 1 cycle
+   \   000007 F5....                CLRB      N:G_SPI_ReceivingData  ;; 1 cycle
+   \   00000A 09....                MOV       A, (SPI_CS_Pin & 0xFFFF)[B]  ;; 1 cycle
+   \   00000D 2004                  SUBW      SP, #0x4           ;; 1 cycle
+   \   00000F 72                    MOV       C, A               ;; 1 cycle
+   \   000010 E6                    ONEW      AX                 ;; 1 cycle
+   \   000011                       ; * Stack frame (at entry) *
+   \   000011                       ; Param size: 4
+   \   000011                       ; Auto size: 8
+   \   000011 FD....                CALL      N:?I_LSH_L02       ;; 3 cycles
+   \   000014 60                    MOV       A, X               ;; 1 cycle
+   \   000015 7CFF                  XOR       A, #0xFF           ;; 1 cycle
+   \   000017 73                    MOV       B, A               ;; 1 cycle
+   \   000018 8805                  MOV       A, [SP+0x05]       ;; 1 cycle
+   \   00001A 70                    MOV       X, A               ;; 1 cycle
+   \   00001B F1                    CLRB      A                  ;; 1 cycle
+   \   00001C 01                    ADDW      AX, AX             ;; 1 cycle
+   \   00001D 04....                ADDW      AX, #SPI_CS_Port   ;; 1 cycle
+   \   000020 16                    MOVW      HL, AX             ;; 1 cycle
+   \   000021 AB                    MOVW      AX, [HL]           ;; 1 cycle
+   \   000022 16                    MOVW      HL, AX             ;; 1 cycle
+   \   000023 63                    MOV       A, B               ;; 1 cycle
+   \   000024 5D                    AND       A, [HL]            ;; 1 cycle
+   \   000025 9B                    MOV       [HL], A            ;; 1 cycle
+     82          
+     83          	SPI_CS_Start(aDevice);
+     84          
+     85          	for (d=100; d>0; d--) // delay
+   \   000026 306400                MOVW      AX, #0x64          ;; 1 cycle
+   \   000029 B800                  MOVW      [SP], AX           ;; 1 cycle
+   \   00002B A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   00002D 440000                CMPW      AX, #0x0           ;; 1 cycle
+   \   000030 DD24                  BZ        ??SPI_SendReceive_4  ;; 4 cycles
+   \   000032                       ; ------------------------------------- Block: 35 cycles
+   \                     ??SPI_Send_0:
+   \   000032 A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   000034 B1                    DECW      AX                 ;; 1 cycle
+   \   000035 B800                  MOVW      [SP], AX           ;; 1 cycle
+   \   000037 A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   000039 440000                CMPW      AX, #0x0           ;; 1 cycle
+   \   00003C DD18                  BZ        ??SPI_SendReceive_4  ;; 4 cycles
+   \   00003E                       ; ------------------------------------- Block: 9 cycles
+   \   00003E A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   000040 B1                    DECW      AX                 ;; 1 cycle
+   \   000041 B800                  MOVW      [SP], AX           ;; 1 cycle
+   \   000043 A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   000045 440000                CMPW      AX, #0x0           ;; 1 cycle
+   \   000048 DD0C                  BZ        ??SPI_SendReceive_4  ;; 4 cycles
+   \   00004A                       ; ------------------------------------- Block: 9 cycles
+   \   00004A A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   00004C B1                    DECW      AX                 ;; 1 cycle
+   \   00004D B800                  MOVW      [SP], AX           ;; 1 cycle
+   \   00004F A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   000051 440000                CMPW      AX, #0x0           ;; 1 cycle
+   \   000054 DFDC                  BNZ       ??SPI_Send_0       ;; 4 cycles
+   \   000056                       ; ------------------------------------- Block: 9 cycles
+     86          		;
+     87          
+     88              CSI_SEND_RECEIVE(aData, aLength, &noRXData);
+   \                     ??SPI_SendReceive_4:
+   \   000056 AEF8                  MOVW      AX, SP             ;; 1 cycle
+   \   000058 040200                ADDW      AX, #0x2           ;; 1 cycle
+   \   00005B 14                    MOVW      DE, AX             ;; 1 cycle
+   \   00005C A80E                  MOVW      AX, [SP+0x0E]      ;; 1 cycle
+   \   00005E 12                    MOVW      BC, AX             ;; 1 cycle
+   \   00005F A806                  MOVW      AX, [SP+0x06]      ;; 1 cycle
+   \   000061 FD....                CALL      R_CSI21_Send_Receive  ;; 3 cycles
+   \   000064                       ; ------------------------------------- Block: 9 cycles
+     89              while(G_SPI_SendingData);
+   \                     ??SPI_Send_1:
+   \   000064 D5....                CMP0      N:G_SPI_SendingData  ;; 1 cycle
+   \   000067 DFFB                  BNZ       ??SPI_Send_1       ;; 4 cycles
+   \   000069                       ; ------------------------------------- Block: 5 cycles
+     90          
+     91              SPI_CS_End(aDevice);
+   \   000069 8805                  MOV       A, [SP+0x05]       ;; 1 cycle
+   \   00006B 73                    MOV       B, A               ;; 1 cycle
+   \   00006C 09....                MOV       A, (SPI_CS_Pin & 0xFFFF)[B]  ;; 1 cycle
+   \   00006F 72                    MOV       C, A               ;; 1 cycle
+   \   000070 E6                    ONEW      AX                 ;; 1 cycle
+   \   000071 FD....                CALL      N:?I_LSH_L02       ;; 3 cycles
+   \   000074 60                    MOV       A, X               ;; 1 cycle
+   \   000075 73                    MOV       B, A               ;; 1 cycle
+   \   000076 8805                  MOV       A, [SP+0x05]       ;; 1 cycle
+   \   000078 70                    MOV       X, A               ;; 1 cycle
+   \   000079 F1                    CLRB      A                  ;; 1 cycle
+   \   00007A 01                    ADDW      AX, AX             ;; 1 cycle
+   \   00007B 04....                ADDW      AX, #SPI_CS_Port   ;; 1 cycle
+   \   00007E 16                    MOVW      HL, AX             ;; 1 cycle
+   \   00007F 1008                  ADDW      SP, #0x8           ;; 1 cycle
+   \   000081 AB                    MOVW      AX, [HL]           ;; 1 cycle
+   \   000082 16                    MOVW      HL, AX             ;; 1 cycle
+   \   000083 63                    MOV       A, B               ;; 1 cycle
+   \   000084 6D                    OR        A, [HL]            ;; 1 cycle
+   \   000085 9B                    MOV       [HL], A            ;; 1 cycle
+     92          }
+   \   000086 C4                    POP       DE                 ;; 1 cycle
+   \   000087                       ; ------------------------------------- Block: 23 cycles
+   \   000087                       ; ------------------------------------- Total: 99 cycles
+   \   000087                       REQUIRE ?CLRL78_V1_0_L00
+   \   000087                       REQUIRE ?Subroutine0
+   \   000087                       ; // Fall through to label ?Subroutine0
+
+   \                                 In  segment CODE, align 1, keep-with-next
+   \                     ?Subroutine0:
+   \   000000 FD....                CALL      N:?FUNC_LEAVE_L06
+   \   000003 0400                  DW        0x4                ;; 3 cycles
+   \   000005                       ; ------------------------------------- Block: 3 cycles
+   \   000005                       ; ------------------------------------- Total: 3 cycles
+   \   000005                       REQUIRE ?CLRL78_V1_0_L00
+     93          
+
+   \                                 In  segment CODE, align 1, keep-with-next
+     94          void SPI_SendReceive(uint8_t aDevice, uint8_t *aTXData, uint32_t aTXLength, uint8_t *aRXData)
+   \                     SPI_SendReceive:
+     95          {
+   \   000000 C3                    PUSH      BC                 ;; 1 cycle
+   \   000001 C1                    PUSH      AX                 ;; 1 cycle
+   \   000002 C1                    PUSH      AX                 ;; 1 cycle
+     96          		volatile uint16_t d;
+     97          
+     98          		G_SPI_SendingData = 1;
+   \   000003 E5....                ONEB      N:G_SPI_SendingData  ;; 1 cycle
+     99          		G_SPI_ReceivingData = 1;
+   \   000006 73                    MOV       B, A               ;; 1 cycle
+   \   000007 E5....                ONEB      N:G_SPI_ReceivingData  ;; 1 cycle
+   \   00000A 09....                MOV       A, (SPI_CS_Pin & 0xFFFF)[B]  ;; 1 cycle
+   \   00000D 72                    MOV       C, A               ;; 1 cycle
+   \   00000E E6                    ONEW      AX                 ;; 1 cycle
+   \   00000F                       ; * Stack frame (at entry) *
+   \   00000F                       ; Param size: 4
+   \   00000F                       ; Auto size: 6
+   \   00000F FD....                CALL      N:?I_LSH_L02       ;; 3 cycles
+   \   000012 60                    MOV       A, X               ;; 1 cycle
+   \   000013 7CFF                  XOR       A, #0xFF           ;; 1 cycle
+   \   000015 73                    MOV       B, A               ;; 1 cycle
+   \   000016 8803                  MOV       A, [SP+0x03]       ;; 1 cycle
+   \   000018 70                    MOV       X, A               ;; 1 cycle
+   \   000019 F1                    CLRB      A                  ;; 1 cycle
+   \   00001A 01                    ADDW      AX, AX             ;; 1 cycle
+   \   00001B 04....                ADDW      AX, #SPI_CS_Port   ;; 1 cycle
+   \   00001E 16                    MOVW      HL, AX             ;; 1 cycle
+   \   00001F AB                    MOVW      AX, [HL]           ;; 1 cycle
+   \   000020 16                    MOVW      HL, AX             ;; 1 cycle
+   \   000021 63                    MOV       A, B               ;; 1 cycle
+   \   000022 5D                    AND       A, [HL]            ;; 1 cycle
+   \   000023 9B                    MOV       [HL], A            ;; 1 cycle
+    100          
+    101          		SPI_CS_Start(aDevice);
+    102          
+    103          		for (d=100; d>0; d--) // delay
+   \   000024 306400                MOVW      AX, #0x64          ;; 1 cycle
+   \   000027 B800                  MOVW      [SP], AX           ;; 1 cycle
+   \   000029 A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   00002B 440000                CMPW      AX, #0x0           ;; 1 cycle
+   \   00002E DD24                  BZ        ??SPI_SendReceive_5  ;; 4 cycles
+   \   000030                       ; ------------------------------------- Block: 34 cycles
+   \                     ??SPI_SendReceive_6:
+   \   000030 A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   000032 B1                    DECW      AX                 ;; 1 cycle
+   \   000033 B800                  MOVW      [SP], AX           ;; 1 cycle
+   \   000035 A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   000037 440000                CMPW      AX, #0x0           ;; 1 cycle
+   \   00003A DD18                  BZ        ??SPI_SendReceive_5  ;; 4 cycles
+   \   00003C                       ; ------------------------------------- Block: 9 cycles
+   \   00003C A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   00003E B1                    DECW      AX                 ;; 1 cycle
+   \   00003F B800                  MOVW      [SP], AX           ;; 1 cycle
+   \   000041 A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   000043 440000                CMPW      AX, #0x0           ;; 1 cycle
+   \   000046 DD0C                  BZ        ??SPI_SendReceive_5  ;; 4 cycles
+   \   000048                       ; ------------------------------------- Block: 9 cycles
+   \   000048 A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   00004A B1                    DECW      AX                 ;; 1 cycle
+   \   00004B B800                  MOVW      [SP], AX           ;; 1 cycle
+   \   00004D A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   00004F 440000                CMPW      AX, #0x0           ;; 1 cycle
+   \   000052 DFDC                  BNZ       ??SPI_SendReceive_6  ;; 4 cycles
+   \   000054                       ; ------------------------------------- Block: 9 cycles
+    104          			;
+    105          
+    106              CSI_SEND_RECEIVE(aTXData, aTXLength, aRXData);
+   \                     ??SPI_SendReceive_5:
+   \   000054 A80A                  MOVW      AX, [SP+0x0A]      ;; 1 cycle
+   \   000056 12                    MOVW      BC, AX             ;; 1 cycle
+   \   000057 A804                  MOVW      AX, [SP+0x04]      ;; 1 cycle
+   \   000059 FD....                CALL      R_CSI21_Send_Receive  ;; 3 cycles
+   \   00005C                       ; ------------------------------------- Block: 6 cycles
+    107              while(G_SPI_SendingData || G_SPI_ReceivingData);
+   \                     ??SPI_SendReceive_7:
+   \   00005C D5....                CMP0      N:G_SPI_SendingData  ;; 1 cycle
+   \   00005F DFFB                  BNZ       ??SPI_SendReceive_7  ;; 4 cycles
+   \   000061                       ; ------------------------------------- Block: 5 cycles
+   \   000061 D5....                CMP0      N:G_SPI_ReceivingData  ;; 1 cycle
+   \   000064 DFF6                  BNZ       ??SPI_SendReceive_7  ;; 4 cycles
+   \   000066                       ; ------------------------------------- Block: 5 cycles
+    108          
+    109          		SPI_CS_End(aDevice);
+   \   000066 8803                  MOV       A, [SP+0x03]       ;; 1 cycle
+   \   000068 73                    MOV       B, A               ;; 1 cycle
+   \   000069 09....                MOV       A, (SPI_CS_Pin & 0xFFFF)[B]  ;; 1 cycle
+   \   00006C 72                    MOV       C, A               ;; 1 cycle
+   \   00006D E6                    ONEW      AX                 ;; 1 cycle
+   \   00006E FD....                CALL      N:?I_LSH_L02       ;; 3 cycles
+   \   000071 60                    MOV       A, X               ;; 1 cycle
+   \   000072 73                    MOV       B, A               ;; 1 cycle
+   \   000073 8803                  MOV       A, [SP+0x03]       ;; 1 cycle
+   \   000075 70                    MOV       X, A               ;; 1 cycle
+   \   000076 F1                    CLRB      A                  ;; 1 cycle
+   \   000077 01                    ADDW      AX, AX             ;; 1 cycle
+   \   000078 04....                ADDW      AX, #SPI_CS_Port   ;; 1 cycle
+   \   00007B 16                    MOVW      HL, AX             ;; 1 cycle
+   \   00007C 1006                  ADDW      SP, #0x6           ;; 1 cycle
+   \   00007E AB                    MOVW      AX, [HL]           ;; 1 cycle
+   \   00007F 16                    MOVW      HL, AX             ;; 1 cycle
+   \   000080 63                    MOV       A, B               ;; 1 cycle
+   \   000081 6D                    OR        A, [HL]            ;; 1 cycle
+   \   000082 9B                    MOV       [HL], A            ;; 1 cycle
+    110          }
+   \   000083 ED....                BR        N:?Subroutine0     ;; 3 cycles
+   \   000086                       ; ------------------------------------- Block: 25 cycles
+   \   000086                       ; ------------------------------------- Total: 102 cycles
+   \   000086                       REQUIRE ?CLRL78_V1_0_L00
+
+   \                                 In  segment NEAR_ID, align 2, align-sorted
+   \                     `?<Initializer for SPI_CS_Port>`:
+   \   000000 ........              DW _A_P14, _A_P14
+
+   \                                 In  segment NEAR_ID, align 2, align-sorted
+   \                     `?<Initializer for SPI_CS_Pin>`:
+   \   000000 0502                  DB 5, 2
+    111          
+
+   Maximum stack usage in bytes:
+
+   CSTACK Function
+   ------ --------
+      2   IO_Reset
+      2   SPI_CS_End
+      2   SPI_CS_Start
+      2   SPI_Init
+        2   -> R_CSI21_Create
+        2   -> R_CSI21_Start
+     14   SPI_Send
+       10   -> R_CSI21_Send_Receive
+     10   SPI_SendReceive
+        6   -> R_CSI21_Send_Receive
+
+
+   Segment part sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       2  ?<Initializer for SPI_CS_Pin>
+       4  ?<Initializer for SPI_CS_Port>
+       5  ?Subroutine0
+     121  IO_Reset
+      30  SPI_CS_End
+       2  SPI_CS_Pin
+       4  SPI_CS_Port
+      32  SPI_CS_Start
+     127  SPI_Init
+     135  SPI_Send
+     134  SPI_SendReceive
+       1  _A_P13
+       1  _A_P14
+
+ 
+ 584 bytes in segment CODE
+   6 bytes in segment NEAR_I
+   6 bytes in segment NEAR_ID
+   2 bytes in segment SADDR_A
+ 
+ 584 bytes of CODE  memory
+   6 bytes of CONST memory
+   6 bytes of DATA  memory (+ 2 bytes shared)
+
+Errors: none
+Warnings: none

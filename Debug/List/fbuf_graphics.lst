@@ -1,0 +1,1100 @@
+###############################################################################
+#                                                                             #
+# IAR C/C++ Compiler V1.30.5.50715 for RL78             17/Apr/2014  13:04:23 #
+# Copyright 2011-2013 IAR Systems AB.                                         #
+# Network license: ece-lic-19.ece.ncsu.edu (STD)                              #
+#                                                                             #
+#    Core         =  rl78_2                                                   #
+#    Code model   =  Near                                                     #
+#    Data model   =  Near                                                     #
+#                 =                                                           #
+#    Source file  =  D:\NCSU\Courses\ECE 561 Embedded System Design\Project   #
+#                    3\Project3\Project3\Project3Code\user_src\fbuf_graphics. #
+#                    c                                                        #
+#    Command line =  "D:\NCSU\Courses\ECE 561 Embedded System Design\Project  #
+#                    3\Project3\Project3\Project3Code\user_src\fbuf_graphics. #
+#                    c" --core rl78_2 --code_model near --data_model near     #
+#                    --near_const_location rom0 -o "D:\NCSU\Courses\ECE 561   #
+#                    Embedded System Design\Project                           #
+#                    3\Project3\Project3\Project3Code\Debug\Obj\"             #
+#                    --dlib_config "C:\Program Files (x86)\IAR                #
+#                    Systems\Embedded Workbench 6.5\rl78\LIB\dlrl78nn2n.h"    #
+#                    -e -Ohs --no_crosscall --debug -lCN                      #
+#                    "D:\NCSU\Courses\ECE 561 Embedded System Design\Project  #
+#                    3\Project3\Project3\Project3Code\Debug\List\" -I         #
+#                    "D:\NCSU\Courses\ECE 561 Embedded System Design\Project  #
+#                    3\Project3\Project3\Project3Code/applilet3_src/\" -I     #
+#                    "D:\NCSU\Courses\ECE 561 Embedded System Design\Project  #
+#                    3\Project3\Project3\Project3Code/Glyph/\" -I             #
+#                    "D:\NCSU\Courses\ECE 561 Embedded System Design\Project  #
+#                    3\Project3\Project3\Project3Code/Glyph/Drivers/\" -I     #
+#                    "D:\NCSU\Courses\ECE 561 Embedded System Design\Project  #
+#                    3\Project3\Project3\Project3Code/user_include/\" -I      #
+#                    "D:\NCSU\Courses\ECE 561 Embedded System Design\Project  #
+#                    3\Project3\Project3\Project3Code/RTC/\"                  #
+#                    --no_size_constraints                                    #
+#    List file    =  D:\NCSU\Courses\ECE 561 Embedded System Design\Project   #
+#                    3\Project3\Project3\Project3Code\Debug\List\fbuf_graphic #
+#                    s.lst                                                    #
+#    Object file  =  D:\NCSU\Courses\ECE 561 Embedded System Design\Project   #
+#                    3\Project3\Project3\Project3Code\Debug\Obj\fbuf_graphics #
+#                    .r87                                                     #
+#                                                                             #
+#                                                                             #
+###############################################################################
+
+D:\NCSU\Courses\ECE 561 Embedded System Design\Project 3\Project3\Project3\Project3Code\user_src\fbuf_graphics.c
+      1          // Frame Buffer Graphics
+      2          #include "r_cg_macrodriver.h"
+      3          #include "lcd.h"
+      4          #include "YRDKRL78_LCD.h"
+      5          #include "fbuf_graphics.h"
+      6          
+
+   \                                 In  segment NEAR_Z, align 2, align-sorted
+      7          static uint8_t fbuf[LCD_W][LCD_H/8];            // Frame buffer
+   \                     fbuf:
+   \   000000                       DS 768
+   \   000300                       REQUIRE __INIT_NEAR_Z
+
+   \                                 In  segment NEAR_Z, align 2, align-sorted
+      8          static uint8_t fbuf_BG[LCD_W][LCD_H/8];        // Background Frame buffer
+   \                     fbuf_BG:
+   \   000000                       DS 768
+   \   000300                       REQUIRE __INIT_NEAR_Z
+
+   \                                 In  segment NEAR_Z, align 2, align-sorted
+      9          static uint8_t fbuf_FG[LCD_W][LCD_H/8];        // Foreground Frame Buffer   
+   \                     fbuf_FG:
+   \   000000                       DS 768
+   \   000300                       REQUIRE __INIT_NEAR_Z
+
+   \                                 In  segment NEAR_Z, align 2, align-sorted
+     10          static uint8_t fbuf_FG_prev[LCD_W][LCD_H/8];  // Previous Foreground frame buffer
+   \                     fbuf_FG_prev:
+   \   000000                       DS 768
+   \   000300                       REQUIRE __INIT_NEAR_Z
+
+   \                                 In  segment NEAR_Z, align 2, align-sorted
+     11          static uint8_t fbuf_chk[LCD_W][LCD_H];       // Each pixel bit check
+   \                     fbuf_chk:
+   \   000000                       DS 6144
+   \   001800                       REQUIRE __INIT_NEAR_Z
+
+   \                                 In  segment NEAR_Z, align 2, align-sorted
+     12          static uint8_t fbuf_chk_bg[LCD_W][LCD_H/8]; // Background Buffer Valid bit
+   \                     fbuf_chk_bg:
+   \   000000                       DS 768
+   \   000300                       REQUIRE __INIT_NEAR_Z
+
+   \                                 In  segment NEAR_Z, align 2, align-sorted
+     13          static uint8_t fbuf_chk_fg[LCD_W][LCD_H/8]; // Foreground buffer Valid bit
+   \                     fbuf_chk_fg:
+   \   000000                       DS 768
+   \   000300                       REQUIRE __INIT_NEAR_Z
+     14          
+     15          
+
+   \                                 In  segment CODE, align 1, keep-with-next
+     16          void FBG_InitFB(void) {             // Initialize frane buffers
+   \                     FBG_InitFB:
+   \   000000 C3                    PUSH      BC                 ;; 1 cycle
+   \   000001 C5                    PUSH      DE                 ;; 1 cycle
+   \   000002 200A                  SUBW      SP, #0xA           ;; 1 cycle
+     17          	uint8_t x, y;
+     18          
+     19          	for (x=0; x<LCD_W; x++) {
+   \   000004 30....                MOVW      AX, #fbuf_BG       ;; 1 cycle
+   \   000007 B808                  MOVW      [SP+0x08], AX      ;; 1 cycle
+   \   000009 30....                MOVW      AX, #fbuf_FG       ;; 1 cycle
+   \   00000C B806                  MOVW      [SP+0x06], AX      ;; 1 cycle
+   \   00000E 30....                MOVW      AX, #fbuf_chk      ;; 1 cycle
+   \   000011 B804                  MOVW      [SP+0x04], AX      ;; 1 cycle
+   \   000013 5360                  MOV       B, #0x60           ;; 1 cycle
+   \   000015                       ; * Stack frame (at entry) *
+   \   000015                       ; Param size: 0
+   \   000015                       ; Auto size: 10
+   \   000015                       ; ------------------------------------- Block: 10 cycles
+     20          		for (y=0; y<LCD_H/8; y++) {
+   \                     ??FBG_InitFB_0:
+   \   000015 A808                  MOVW      AX, [SP+0x08]      ;; 1 cycle
+   \   000017 B802                  MOVW      [SP+0x02], AX      ;; 1 cycle
+   \   000019 A806                  MOVW      AX, [SP+0x06]      ;; 1 cycle
+   \   00001B B800                  MOVW      [SP], AX           ;; 1 cycle
+   \   00001D A804                  MOVW      AX, [SP+0x04]      ;; 1 cycle
+   \   00001F 14                    MOVW      DE, AX             ;; 1 cycle
+   \   000020 5004                  MOV       X, #0x4            ;; 1 cycle
+   \   000022                       ; ------------------------------------- Block: 7 cycles
+     21          			fbuf_BG[x][y] = 0;
+   \                     ??FBG_InitFB_1:
+   \   000022 16                    MOVW      HL, AX             ;; 1 cycle
+   \   000023 A802                  MOVW      AX, [SP+0x02]      ;; 1 cycle
+   \   000025 37                    XCHW      AX, HL             ;; 1 cycle
+   \   000026 F1                    CLRB      A                  ;; 1 cycle
+   \   000027 9B                    MOV       [HL], A            ;; 1 cycle
+     22                                  fbuf_FG[x][y] = 0;
+   \   000028 16                    MOVW      HL, AX             ;; 1 cycle
+   \   000029 A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   00002B 37                    XCHW      AX, HL             ;; 1 cycle
+   \   00002C 9B                    MOV       [HL], A            ;; 1 cycle
+     23                                  fbuf_chk[x][y] = 0;
+   \   00002D 99                    MOV       [DE], A            ;; 1 cycle
+   \   00002E 16                    MOVW      HL, AX             ;; 1 cycle
+   \   00002F A802                  MOVW      AX, [SP+0x02]      ;; 1 cycle
+   \   000031 37                    XCHW      AX, HL             ;; 1 cycle
+   \   000032 A7                    INCW      HL                 ;; 1 cycle
+   \   000033 9B                    MOV       [HL], A            ;; 1 cycle
+   \   000034 16                    MOVW      HL, AX             ;; 1 cycle
+   \   000035 A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   000037 37                    XCHW      AX, HL             ;; 1 cycle
+   \   000038 A7                    INCW      HL                 ;; 1 cycle
+   \   000039 9B                    MOV       [HL], A            ;; 1 cycle
+   \   00003A 9A01                  MOV       [DE+0x01], A       ;; 1 cycle
+     24          		}
+   \   00003C 16                    MOVW      HL, AX             ;; 1 cycle
+   \   00003D A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   00003F 040200                ADDW      AX, #0x2           ;; 1 cycle
+   \   000042 B800                  MOVW      [SP], AX           ;; 1 cycle
+   \   000044 A802                  MOVW      AX, [SP+0x02]      ;; 1 cycle
+   \   000046 040200                ADDW      AX, #0x2           ;; 1 cycle
+   \   000049 B802                  MOVW      [SP+0x02], AX      ;; 1 cycle
+   \   00004B 17                    MOVW      AX, HL             ;; 1 cycle
+   \   00004C A5                    INCW      DE                 ;; 1 cycle
+   \   00004D 90                    DEC       X                  ;; 1 cycle
+   \   00004E A5                    INCW      DE                 ;; 1 cycle
+   \   00004F DFD1                  BNZ       ??FBG_InitFB_1     ;; 4 cycles
+   \   000051                       ; ------------------------------------- Block: 36 cycles
+     25          	}
+   \   000051 A804                  MOVW      AX, [SP+0x04]      ;; 1 cycle
+   \   000053 044000                ADDW      AX, #0x40          ;; 1 cycle
+   \   000056 B804                  MOVW      [SP+0x04], AX      ;; 1 cycle
+   \   000058 A806                  MOVW      AX, [SP+0x06]      ;; 1 cycle
+   \   00005A 040800                ADDW      AX, #0x8           ;; 1 cycle
+   \   00005D B806                  MOVW      [SP+0x06], AX      ;; 1 cycle
+   \   00005F A808                  MOVW      AX, [SP+0x08]      ;; 1 cycle
+   \   000061 040800                ADDW      AX, #0x8           ;; 1 cycle
+   \   000064 93                    DEC       B                  ;; 1 cycle
+   \   000065 B808                  MOVW      [SP+0x08], AX      ;; 1 cycle
+   \   000067 DFAC                  BNZ       ??FBG_InitFB_0     ;; 4 cycles
+   \   000069                       ; ------------------------------------- Total: 67 cycles
+   \   000069                       ; ------------------------------------- Block: 14 cycles
+     26                 
+     27          }
+   \   000069                       REQUIRE ?CLRL78_V1_0_L00
+   \   000069                       REQUIRE ?Subroutine0
+   \   000069                       ; // Fall through to label ?Subroutine0
+
+   \                                 In  segment CODE, align 1, keep-with-next
+   \                     ?Subroutine0:
+   \   000000 100A                  ADDW      SP, #0xA           ;; 1 cycle
+   \   000002 C4                    POP       DE                 ;; 1 cycle
+   \   000003 C2                    POP       BC                 ;; 1 cycle
+   \   000004 D7                    RET                          ;; 6 cycles
+   \   000005                       ; ------------------------------------- Block: 9 cycles
+   \   000005                       ; ------------------------------------- Total: 9 cycles
+   \   000005                       REQUIRE ?CLRL78_V1_0_L00
+     28          
+
+   \                                 In  segment CODE, align 1, keep-with-next
+     29          void FG_ClearFB(void)  // Clear current Foreground buffer,
+   \                     FG_ClearFB:
+     30          {                          // Store Previous buffer
+   \   000000 C3                    PUSH      BC                 ;; 1 cycle
+   \   000001 C5                    PUSH      DE                 ;; 1 cycle
+   \   000002 200A                  SUBW      SP, #0xA           ;; 1 cycle
+     31          	uint8_t x, y;
+     32          
+     33          	for (x=0; x<LCD_W; x++) {
+   \   000004 30....                MOVW      AX, #fbuf_FG       ;; 1 cycle
+   \   000007 B808                  MOVW      [SP+0x08], AX      ;; 1 cycle
+   \   000009 30....                MOVW      AX, #fbuf_FG_prev  ;; 1 cycle
+   \   00000C B806                  MOVW      [SP+0x06], AX      ;; 1 cycle
+   \   00000E 30....                MOVW      AX, #fbuf_chk_fg   ;; 1 cycle
+   \   000011 B804                  MOVW      [SP+0x04], AX      ;; 1 cycle
+   \   000013 5360                  MOV       B, #0x60           ;; 1 cycle
+   \   000015                       ; * Stack frame (at entry) *
+   \   000015                       ; Param size: 0
+   \   000015                       ; Auto size: 10
+   \   000015                       ; ------------------------------------- Block: 10 cycles
+     34          		for (y=0; y<LCD_H/8; y++) 
+   \                     ??FG_ClearFB_0:
+   \   000015 F0                    CLRB      X                  ;; 1 cycle
+   \   000016 14                    MOVW      DE, AX             ;; 1 cycle
+   \   000017 A808                  MOVW      AX, [SP+0x08]      ;; 1 cycle
+   \   000019 35                    XCHW      AX, DE             ;; 1 cycle
+   \   00001A 16                    MOVW      HL, AX             ;; 1 cycle
+   \   00001B A806                  MOVW      AX, [SP+0x06]      ;; 1 cycle
+   \   00001D B802                  MOVW      [SP+0x02], AX      ;; 1 cycle
+   \   00001F A804                  MOVW      AX, [SP+0x04]      ;; 1 cycle
+   \   000021 B800                  MOVW      [SP], AX           ;; 1 cycle
+   \   000023 17                    MOVW      AX, HL             ;; 1 cycle
+   \   000024                       ; ------------------------------------- Block: 10 cycles
+     35                          {       if(fbuf_FG[x][y] != 0) 
+   \                     ??FG_ClearFB_1:
+   \   000024 89                    MOV       A, [DE]            ;; 1 cycle
+   \   000025 D1                    CMP0      A                  ;; 1 cycle
+   \   000026 16                    MOVW      HL, AX             ;; 1 cycle
+   \   000027 DD08                  BZ        ??FBG_SetPixel_0   ;; 4 cycles
+   \   000029                       ; ------------------------------------- Block: 7 cycles
+     36                                  {
+     37                                    fbuf_FG_prev[x][y] = fbuf_FG[x][y];
+   \   000029 A802                  MOVW      AX, [SP+0x02]      ;; 1 cycle
+   \   00002B 37                    XCHW      AX, HL             ;; 1 cycle
+   \   00002C 9B                    MOV       [HL], A            ;; 1 cycle
+     38                                    fbuf_FG[x][y] = 0;
+   \   00002D F1                    CLRB      A                  ;; 1 cycle
+   \   00002E 99                    MOV       [DE], A            ;; 1 cycle
+   \   00002F EF05                  BR        S:??FBG_SetPixel_1  ;; 3 cycles
+   \   000031                       ; ------------------------------------- Block: 8 cycles
+     39                                  }
+     40                                  else
+     41                                    fbuf_chk_fg[x][y] = 0;
+   \                     ??FBG_SetPixel_0:
+   \   000031 A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   000033 37                    XCHW      AX, HL             ;; 1 cycle
+   \   000034 F1                    CLRB      A                  ;; 1 cycle
+   \   000035 9B                    MOV       [HL], A            ;; 1 cycle
+   \   000036                       ; ------------------------------------- Block: 4 cycles
+   \                     ??FBG_SetPixel_1:
+   \   000036 8A01                  MOV       A, [DE+0x01]       ;; 1 cycle
+   \   000038 80                    INC       X                  ;; 1 cycle
+   \   000039 D1                    CMP0      A                  ;; 1 cycle
+   \   00003A 16                    MOVW      HL, AX             ;; 1 cycle
+   \   00003B DD0A                  BZ        ??FBG_SetPixel_2   ;; 4 cycles
+   \   00003D                       ; ------------------------------------- Block: 8 cycles
+   \   00003D A802                  MOVW      AX, [SP+0x02]      ;; 1 cycle
+   \   00003F 37                    XCHW      AX, HL             ;; 1 cycle
+   \   000040 A7                    INCW      HL                 ;; 1 cycle
+   \   000041 9B                    MOV       [HL], A            ;; 1 cycle
+   \   000042 F1                    CLRB      A                  ;; 1 cycle
+   \   000043 9A01                  MOV       [DE+0x01], A       ;; 1 cycle
+   \   000045 EF06                  BR        S:??FBG_SetPixel_3  ;; 3 cycles
+   \   000047                       ; ------------------------------------- Block: 9 cycles
+   \                     ??FBG_SetPixel_2:
+   \   000047 A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   000049 37                    XCHW      AX, HL             ;; 1 cycle
+   \   00004A A7                    INCW      HL                 ;; 1 cycle
+   \   00004B F1                    CLRB      A                  ;; 1 cycle
+   \   00004C 9B                    MOV       [HL], A            ;; 1 cycle
+   \   00004D                       ; ------------------------------------- Block: 5 cycles
+     42          		}
+   \                     ??FBG_SetPixel_3:
+   \   00004D 80                    INC       X                  ;; 1 cycle
+   \   00004E 16                    MOVW      HL, AX             ;; 1 cycle
+   \   00004F A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   000051 040200                ADDW      AX, #0x2           ;; 1 cycle
+   \   000054 B800                  MOVW      [SP], AX           ;; 1 cycle
+   \   000056 A802                  MOVW      AX, [SP+0x02]      ;; 1 cycle
+   \   000058 040200                ADDW      AX, #0x2           ;; 1 cycle
+   \   00005B B802                  MOVW      [SP+0x02], AX      ;; 1 cycle
+   \   00005D 17                    MOVW      AX, HL             ;; 1 cycle
+   \   00005E 60                    MOV       A, X               ;; 1 cycle
+   \   00005F A5                    INCW      DE                 ;; 1 cycle
+   \   000060 4C08                  CMP       A, #0x8            ;; 1 cycle
+   \   000062 A5                    INCW      DE                 ;; 1 cycle
+   \   000063 DCBF                  BC        ??FG_ClearFB_1     ;; 4 cycles
+   \   000065                       ; ------------------------------------- Block: 17 cycles
+     43          	}
+   \   000065 A804                  MOVW      AX, [SP+0x04]      ;; 1 cycle
+   \   000067 040800                ADDW      AX, #0x8           ;; 1 cycle
+   \   00006A B804                  MOVW      [SP+0x04], AX      ;; 1 cycle
+   \   00006C A806                  MOVW      AX, [SP+0x06]      ;; 1 cycle
+   \   00006E 040800                ADDW      AX, #0x8           ;; 1 cycle
+   \   000071 B806                  MOVW      [SP+0x06], AX      ;; 1 cycle
+   \   000073 A808                  MOVW      AX, [SP+0x08]      ;; 1 cycle
+   \   000075 040800                ADDW      AX, #0x8           ;; 1 cycle
+   \   000078 93                    DEC       B                  ;; 1 cycle
+   \   000079 B808                  MOVW      [SP+0x08], AX      ;; 1 cycle
+   \   00007B DF98                  BNZ       ??FG_ClearFB_0     ;; 4 cycles
+   \   00007D                       ; ------------------------------------- Block: 14 cycles
+     44                 
+     45          }
+   \   00007D ED....                BR        N:?Subroutine0     ;; 3 cycles
+   \   000080                       ; ------------------------------------- Block: 3 cycles
+   \   000080                       ; ------------------------------------- Total: 95 cycles
+   \   000080                       REQUIRE ?CLRL78_V1_0_L00
+     46          
+
+   \                                 In  segment CODE, align 1, keep-with-next
+     47          void FBG_RefreshLCD(void) {  // LCD frame buffer refresh
+   \                     FBG_RefreshLCD:
+   \   000000 C3                    PUSH      BC                 ;; 1 cycle
+   \   000001 C5                    PUSH      DE                 ;; 1 cycle
+   \   000002 2006                  SUBW      SP, #0x6           ;; 1 cycle
+     48          	uint8_t x, y;
+     49          	for (y=0; y<LCD_H/8; y++) {
+   \   000004 30....                MOVW      AX, #fbuf          ;; 1 cycle
+   \   000007 B804                  MOVW      [SP+0x04], AX      ;; 1 cycle
+   \   000009 30....                MOVW      AX, #fbuf_chk      ;; 1 cycle
+   \   00000C F2                    CLRB      C                  ;; 1 cycle
+   \   00000D B802                  MOVW      [SP+0x02], AX      ;; 1 cycle
+   \   00000F                       ; * Stack frame (at entry) *
+   \   00000F                       ; Param size: 0
+   \   00000F                       ; Auto size: 6
+   \   00000F                       ; ------------------------------------- Block: 8 cycles
+     50          		// set row (page) address in DDRAM
+     51          		YRDKRL78_CommandSend(0x40|y);
+   \                     ??FBG_RefreshLCD_0:
+   \   00000F 62                    MOV       A, C               ;; 1 cycle
+   \   000010 6C40                  OR        A, #0x40           ;; 1 cycle
+   \   000012 FD....                CALL      YRDKRL78_CommandSend  ;; 3 cycles
+     52          
+     53          		// set column address in DDRAM to 0
+     54          		//YRDKRL78_CommandSend(0x80);
+     55                          
+     56          		for (x=0; x<LCD_W; x++) {
+   \   000015 A804                  MOVW      AX, [SP+0x04]      ;; 1 cycle
+   \   000017 B800                  MOVW      [SP], AX           ;; 1 cycle
+   \   000019 A802                  MOVW      AX, [SP+0x02]      ;; 1 cycle
+   \   00001B F3                    CLRB      B                  ;; 1 cycle
+   \   00001C 14                    MOVW      DE, AX             ;; 1 cycle
+   \   00001D                       ; ------------------------------------- Block: 10 cycles
+     57          			// write data to DDRAM
+     58          			// column number is autoincremented in LCD controller IC
+     59                            if(fbuf_chk[x][y] != 0)
+   \                     ??FBG_RefreshLCD_1:
+   \   00001D 89                    MOV       A, [DE]            ;; 1 cycle
+   \   00001E D1                    CMP0      A                  ;; 1 cycle
+   \   00001F DD0F                  BZ        ??FBG_SetPixel_4   ;; 4 cycles
+   \   000021                       ; ------------------------------------- Block: 6 cycles
+     60                           {      YRDKRL78_CommandSend(0x80|x);
+   \   000021 63                    MOV       A, B               ;; 1 cycle
+   \   000022 6C80                  OR        A, #0x80           ;; 1 cycle
+   \   000024 FD....                CALL      YRDKRL78_CommandSend  ;; 3 cycles
+     61          			YRDKRL78_DataSend(fbuf[x][y]);
+   \   000027 A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   000029 16                    MOVW      HL, AX             ;; 1 cycle
+   \   00002A 8B                    MOV       A, [HL]            ;; 1 cycle
+   \   00002B FD....                CALL      YRDKRL78_DataSend  ;; 3 cycles
+     62                                  fbuf_chk[x][y] = 0;
+   \   00002E F1                    CLRB      A                  ;; 1 cycle
+   \   00002F 99                    MOV       [DE], A            ;; 1 cycle
+   \   000030                       ; ------------------------------------- Block: 13 cycles
+     63                            }
+     64          		}
+   \                     ??FBG_SetPixel_4:
+   \   000030 15                    MOVW      AX, DE             ;; 1 cycle
+   \   000031 83                    INC       B                  ;; 1 cycle
+   \   000032 044000                ADDW      AX, #0x40          ;; 1 cycle
+   \   000035 14                    MOVW      DE, AX             ;; 1 cycle
+   \   000036 A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   000038 040800                ADDW      AX, #0x8           ;; 1 cycle
+   \   00003B B800                  MOVW      [SP], AX           ;; 1 cycle
+   \   00003D 63                    MOV       A, B               ;; 1 cycle
+   \   00003E 4C60                  CMP       A, #0x60           ;; 1 cycle
+   \   000040 DCDB                  BC        ??FBG_RefreshLCD_1  ;; 4 cycles
+   \   000042                       ; ------------------------------------- Block: 13 cycles
+     65          	}
+   \   000042 A802                  MOVW      AX, [SP+0x02]      ;; 1 cycle
+   \   000044 A1                    INCW      AX                 ;; 1 cycle
+   \   000045 B802                  MOVW      [SP+0x02], AX      ;; 1 cycle
+   \   000047 A804                  MOVW      AX, [SP+0x04]      ;; 1 cycle
+   \   000049 82                    INC       C                  ;; 1 cycle
+   \   00004A A1                    INCW      AX                 ;; 1 cycle
+   \   00004B B804                  MOVW      [SP+0x04], AX      ;; 1 cycle
+   \   00004D 62                    MOV       A, C               ;; 1 cycle
+   \   00004E 4C08                  CMP       A, #0x8            ;; 1 cycle
+   \   000050 DCBD                  BC        ??FBG_RefreshLCD_0  ;; 4 cycles
+   \   000052                       ; ------------------------------------- Block: 13 cycles
+     66          }
+   \   000052 1006                  ADDW      SP, #0x6           ;; 1 cycle
+   \   000054 C4                    POP       DE                 ;; 1 cycle
+   \   000055 C2                    POP       BC                 ;; 1 cycle
+   \   000056 D7                    RET                          ;; 6 cycles
+   \   000057                       ; ------------------------------------- Block: 9 cycles
+   \   000057                       ; ------------------------------------- Total: 72 cycles
+   \   000057                       REQUIRE ?CLRL78_V1_0_L00
+     67          
+
+   \                                 In  segment CODE, align 1, keep-with-next
+     68          void FBG_RefreshLCD_BG(void) {  // Background Buffer Refresh
+   \                     FBG_RefreshLCD_BG:
+   \   000000 C3                    PUSH      BC                 ;; 1 cycle
+   \   000001 C5                    PUSH      DE                 ;; 1 cycle
+   \   000002 2008                  SUBW      SP, #0x8           ;; 1 cycle
+     69          	uint8_t x=0, y,i=0;
+     70          	for (y=0; y<LCD_H/8; y++) {
+   \   000004 30....                MOVW      AX, #fbuf_chk_bg   ;; 1 cycle
+   \   000007 B806                  MOVW      [SP+0x06], AX      ;; 1 cycle
+   \   000009 30....                MOVW      AX, #fbuf_BG       ;; 1 cycle
+   \   00000C 5400                  MOV       E, #0x0            ;; 1 cycle
+   \   00000E F3                    CLRB      B                  ;; 1 cycle
+   \   00000F B804                  MOVW      [SP+0x04], AX      ;; 1 cycle
+   \   000011                       ; * Stack frame (at entry) *
+   \   000011                       ; Param size: 0
+   \   000011                       ; Auto size: 8
+   \   000011                       ; ------------------------------------- Block: 9 cycles
+     71          		// set row (page) address in DDRAM
+     72          		YRDKRL78_CommandSend(0x40|y);
+   \                     ??FBG_RefreshLCD_BG_0:
+   \   000011 63                    MOV       A, B               ;; 1 cycle
+   \   000012 6C40                  OR        A, #0x40           ;; 1 cycle
+   \   000014 FD....                CALL      YRDKRL78_CommandSend  ;; 3 cycles
+     73          
+     74          		// set column address in DDRAM to 0
+     75          		//YRDKRL78_CommandSend(0x80);
+     76                          x = 0;
+   \   000017 A806                  MOVW      AX, [SP+0x06]      ;; 1 cycle
+   \   000019 B802                  MOVW      [SP+0x02], AX      ;; 1 cycle
+   \   00001B A804                  MOVW      AX, [SP+0x04]      ;; 1 cycle
+   \   00001D F2                    CLRB      C                  ;; 1 cycle
+   \   00001E B800                  MOVW      [SP], AX           ;; 1 cycle
+   \   000020                       ; ------------------------------------- Block: 10 cycles
+     77          		while(x<LCD_W) {
+     78                            if(fbuf_chk_bg[x][y] == 1)
+   \                     ??FBG_RefreshLCD_BG_1:
+   \   000020 A802                  MOVW      AX, [SP+0x02]      ;; 1 cycle
+   \   000022 16                    MOVW      HL, AX             ;; 1 cycle
+   \   000023 8B                    MOV       A, [HL]            ;; 1 cycle
+   \   000024 4C01                  CMP       A, #0x1            ;; 1 cycle
+   \   000026 DF1C                  BNZ       ??FBG_SetPixel_5   ;; 4 cycles
+   \   000028                       ; ------------------------------------- Block: 8 cycles
+     79                           {      if(x-i != 1)// column number is autoincremented in LCD controller IC   
+   \   000028 C5                    PUSH      DE                 ;; 1 cycle
+   \   000029 62                    MOV       A, C               ;; 1 cycle
+   \   00002A C6                    POP       HL                 ;; 1 cycle
+   \   00002B 5700                  MOV       H, #0x0            ;; 1 cycle
+   \   00002D 70                    MOV       X, A               ;; 1 cycle
+   \   00002E F1                    CLRB      A                  ;; 1 cycle
+   \   00002F 27                    SUBW      AX, HL             ;; 1 cycle
+   \   000030 440100                CMPW      AX, #0x1           ;; 1 cycle
+   \   000033 DD08                  BZ        ??FBG_SetPixel_6   ;; 4 cycles
+   \   000035                       ; ------------------------------------- Block: 12 cycles
+     80                                    {
+     81                                      YRDKRL78_CommandSend(0x80|x);// write data to DDRAM
+   \   000035 62                    MOV       A, C               ;; 1 cycle
+   \   000036 6C80                  OR        A, #0x80           ;; 1 cycle
+   \   000038 FD....                CALL      YRDKRL78_CommandSend  ;; 3 cycles
+     82                                      i = x;
+   \   00003B 62                    MOV       A, C               ;; 1 cycle
+   \   00003C 74                    MOV       E, A               ;; 1 cycle
+   \   00003D                       ; ------------------------------------- Block: 7 cycles
+     83                                    }
+     84          			YRDKRL78_DataSend(fbuf_BG[x][y]);
+   \                     ??FBG_SetPixel_6:
+   \   00003D A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   00003F 16                    MOVW      HL, AX             ;; 1 cycle
+   \   000040 8B                    MOV       A, [HL]            ;; 1 cycle
+   \   000041 FD....                CALL      YRDKRL78_DataSend  ;; 3 cycles
+   \   000044                       ; ------------------------------------- Block: 6 cycles
+     85                            }
+     86                            x++;
+   \                     ??FBG_SetPixel_5:
+   \   000044 A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   000046 82                    INC       C                  ;; 1 cycle
+   \   000047 040800                ADDW      AX, #0x8           ;; 1 cycle
+   \   00004A B800                  MOVW      [SP], AX           ;; 1 cycle
+   \   00004C A802                  MOVW      AX, [SP+0x02]      ;; 1 cycle
+   \   00004E 040800                ADDW      AX, #0x8           ;; 1 cycle
+   \   000051 B802                  MOVW      [SP+0x02], AX      ;; 1 cycle
+     87          		}
+   \   000053 62                    MOV       A, C               ;; 1 cycle
+   \   000054 4C60                  CMP       A, #0x60           ;; 1 cycle
+   \   000056 DCC8                  BC        ??FBG_RefreshLCD_BG_1  ;; 4 cycles
+   \   000058                       ; ------------------------------------- Block: 13 cycles
+     88          	}
+   \   000058 A804                  MOVW      AX, [SP+0x04]      ;; 1 cycle
+   \   00005A A1                    INCW      AX                 ;; 1 cycle
+   \   00005B B804                  MOVW      [SP+0x04], AX      ;; 1 cycle
+   \   00005D A806                  MOVW      AX, [SP+0x06]      ;; 1 cycle
+   \   00005F 83                    INC       B                  ;; 1 cycle
+   \   000060 A1                    INCW      AX                 ;; 1 cycle
+   \   000061 B806                  MOVW      [SP+0x06], AX      ;; 1 cycle
+   \   000063 63                    MOV       A, B               ;; 1 cycle
+   \   000064 4C08                  CMP       A, #0x8            ;; 1 cycle
+   \   000066 DCA9                  BC        ??FBG_RefreshLCD_BG_0  ;; 4 cycles
+   \   000068                       ; ------------------------------------- Block: 13 cycles
+     89          }
+   \   000068 1008                  ADDW      SP, #0x8           ;; 1 cycle
+   \   00006A C4                    POP       DE                 ;; 1 cycle
+   \   00006B C2                    POP       BC                 ;; 1 cycle
+   \   00006C D7                    RET                          ;; 6 cycles
+   \   00006D                       ; ------------------------------------- Block: 9 cycles
+   \   00006D                       ; ------------------------------------- Total: 87 cycles
+   \   00006D                       REQUIRE ?CLRL78_V1_0_L00
+
+   \                                 In  segment CODE, align 1, keep-with-next
+     90          void FBG_RefreshLCD_FG(void) {  // Forefround buffer refresh
+   \                     FBG_RefreshLCD_FG:
+   \   000000 C3                    PUSH      BC                 ;; 1 cycle
+   \   000001 C5                    PUSH      DE                 ;; 1 cycle
+   \   000002 2010                  SUBW      SP, #0x10          ;; 1 cycle
+     91          	uint8_t x=0, y,i=0;
+     92                
+     93          	for (y=0; y<LCD_H/8; y++) 
+   \   000004 30....                MOVW      AX, #fbuf_chk_fg   ;; 1 cycle
+   \   000007 B80E                  MOVW      [SP+0x0E], AX      ;; 1 cycle
+   \   000009 30....                MOVW      AX, #fbuf_FG_prev  ;; 1 cycle
+   \   00000C B80C                  MOVW      [SP+0x0C], AX      ;; 1 cycle
+   \   00000E 30....                MOVW      AX, #fbuf_FG       ;; 1 cycle
+   \   000011 B80A                  MOVW      [SP+0x0A], AX      ;; 1 cycle
+   \   000013 30....                MOVW      AX, #fbuf_BG       ;; 1 cycle
+   \   000016 5400                  MOV       E, #0x0            ;; 1 cycle
+   \   000018 F3                    CLRB      B                  ;; 1 cycle
+   \   000019 B808                  MOVW      [SP+0x08], AX      ;; 1 cycle
+   \   00001B                       ; * Stack frame (at entry) *
+   \   00001B                       ; Param size: 0
+   \   00001B                       ; Auto size: 16
+   \   00001B                       ; ------------------------------------- Block: 13 cycles
+     94                  {
+     95          		YRDKRL78_CommandSend(0x40|(y));
+   \                     ??FBG_RefreshLCD_FG_0:
+   \   00001B 63                    MOV       A, B               ;; 1 cycle
+   \   00001C 6C40                  OR        A, #0x40           ;; 1 cycle
+   \   00001E FD....                CALL      YRDKRL78_CommandSend  ;; 3 cycles
+     96                          x =0;
+   \   000021 A80E                  MOVW      AX, [SP+0x0E]      ;; 1 cycle
+   \   000023 B806                  MOVW      [SP+0x06], AX      ;; 1 cycle
+   \   000025 A80C                  MOVW      AX, [SP+0x0C]      ;; 1 cycle
+   \   000027 B804                  MOVW      [SP+0x04], AX      ;; 1 cycle
+   \   000029 A80A                  MOVW      AX, [SP+0x0A]      ;; 1 cycle
+   \   00002B B800                  MOVW      [SP], AX           ;; 1 cycle
+   \   00002D A808                  MOVW      AX, [SP+0x08]      ;; 1 cycle
+   \   00002F F2                    CLRB      C                  ;; 1 cycle
+   \   000030 B802                  MOVW      [SP+0x02], AX      ;; 1 cycle
+   \   000032                       ; ------------------------------------- Block: 14 cycles
+     97          		while(x<LCD_W)
+     98                          {			
+     99                            if((fbuf_chk_fg[x][y] == 1) && (fbuf_FG_prev[x][y] != fbuf_FG[x][y]))
+   \                     ??FBG_RefreshLCD_FG_1:
+   \   000032 A806                  MOVW      AX, [SP+0x06]      ;; 1 cycle
+   \   000034 16                    MOVW      HL, AX             ;; 1 cycle
+   \   000035 8B                    MOV       A, [HL]            ;; 1 cycle
+   \   000036 4C01                  CMP       A, #0x1            ;; 1 cycle
+   \   000038 DF2E                  BNZ       ??FBG_SetPixel_7   ;; 4 cycles
+   \   00003A                       ; ------------------------------------- Block: 8 cycles
+   \   00003A A804                  MOVW      AX, [SP+0x04]      ;; 1 cycle
+   \   00003C 16                    MOVW      HL, AX             ;; 1 cycle
+   \   00003D 8B                    MOV       A, [HL]            ;; 1 cycle
+   \   00003E 75                    MOV       D, A               ;; 1 cycle
+   \   00003F A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   000041 16                    MOVW      HL, AX             ;; 1 cycle
+   \   000042 65                    MOV       A, D               ;; 1 cycle
+   \   000043 4D                    CMP       A, [HL]            ;; 1 cycle
+   \   000044 DD22                  BZ        ??FBG_SetPixel_7   ;; 4 cycles
+   \   000046                       ; ------------------------------------- Block: 12 cycles
+    100                           {      if(x-i != 1) // column number is autoincremented in LCD controller IC
+   \   000046 C5                    PUSH      DE                 ;; 1 cycle
+   \   000047 62                    MOV       A, C               ;; 1 cycle
+   \   000048 C6                    POP       HL                 ;; 1 cycle
+   \   000049 5700                  MOV       H, #0x0            ;; 1 cycle
+   \   00004B 70                    MOV       X, A               ;; 1 cycle
+   \   00004C F1                    CLRB      A                  ;; 1 cycle
+   \   00004D 27                    SUBW      AX, HL             ;; 1 cycle
+   \   00004E 440100                CMPW      AX, #0x1           ;; 1 cycle
+   \   000051 DD08                  BZ        ??FBG_SetPixel_8   ;; 4 cycles
+   \   000053                       ; ------------------------------------- Block: 12 cycles
+    101                                    {
+    102                                      YRDKRL78_CommandSend(0x80|x); // write data to DDRAM 
+   \   000053 62                    MOV       A, C               ;; 1 cycle
+   \   000054 6C80                  OR        A, #0x80           ;; 1 cycle
+   \   000056 FD....                CALL      YRDKRL78_CommandSend  ;; 3 cycles
+    103                                      i = x;
+   \   000059 62                    MOV       A, C               ;; 1 cycle
+   \   00005A 74                    MOV       E, A               ;; 1 cycle
+   \   00005B                       ; ------------------------------------- Block: 7 cycles
+    104                                    }
+    105          			YRDKRL78_DataSend(fbuf_FG[x][y]|fbuf_BG[x][y]);
+   \                     ??FBG_SetPixel_8:
+   \   00005B A802                  MOVW      AX, [SP+0x02]      ;; 1 cycle
+   \   00005D 16                    MOVW      HL, AX             ;; 1 cycle
+   \   00005E C7                    PUSH      HL                 ;; 1 cycle
+   \   00005F A802                  MOVW      AX, [SP+0x02]      ;; 1 cycle
+   \   000061 16                    MOVW      HL, AX             ;; 1 cycle
+   \   000062 8B                    MOV       A, [HL]            ;; 1 cycle
+   \   000063 C6                    POP       HL                 ;; 1 cycle
+   \   000064 6D                    OR        A, [HL]            ;; 1 cycle
+   \   000065 FD....                CALL      YRDKRL78_DataSend  ;; 3 cycles
+   \   000068                       ; ------------------------------------- Block: 11 cycles
+    106                            }
+    107                            x++;
+   \                     ??FBG_SetPixel_7:
+   \   000068 A802                  MOVW      AX, [SP+0x02]      ;; 1 cycle
+   \   00006A 82                    INC       C                  ;; 1 cycle
+   \   00006B 040800                ADDW      AX, #0x8           ;; 1 cycle
+   \   00006E B802                  MOVW      [SP+0x02], AX      ;; 1 cycle
+   \   000070 A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   000072 040800                ADDW      AX, #0x8           ;; 1 cycle
+   \   000075 B800                  MOVW      [SP], AX           ;; 1 cycle
+   \   000077 A804                  MOVW      AX, [SP+0x04]      ;; 1 cycle
+   \   000079 040800                ADDW      AX, #0x8           ;; 1 cycle
+   \   00007C B804                  MOVW      [SP+0x04], AX      ;; 1 cycle
+   \   00007E A806                  MOVW      AX, [SP+0x06]      ;; 1 cycle
+   \   000080 040800                ADDW      AX, #0x8           ;; 1 cycle
+   \   000083 B806                  MOVW      [SP+0x06], AX      ;; 1 cycle
+    108          		}
+   \   000085 62                    MOV       A, C               ;; 1 cycle
+   \   000086 4C60                  CMP       A, #0x60           ;; 1 cycle
+   \   000088 DCA8                  BC        ??FBG_RefreshLCD_FG_1  ;; 4 cycles
+   \   00008A                       ; ------------------------------------- Block: 19 cycles
+    109          	}
+   \   00008A A808                  MOVW      AX, [SP+0x08]      ;; 1 cycle
+   \   00008C A1                    INCW      AX                 ;; 1 cycle
+   \   00008D B808                  MOVW      [SP+0x08], AX      ;; 1 cycle
+   \   00008F A80A                  MOVW      AX, [SP+0x0A]      ;; 1 cycle
+   \   000091 A1                    INCW      AX                 ;; 1 cycle
+   \   000092 B80A                  MOVW      [SP+0x0A], AX      ;; 1 cycle
+   \   000094 A80C                  MOVW      AX, [SP+0x0C]      ;; 1 cycle
+   \   000096 A1                    INCW      AX                 ;; 1 cycle
+   \   000097 B80C                  MOVW      [SP+0x0C], AX      ;; 1 cycle
+   \   000099 A80E                  MOVW      AX, [SP+0x0E]      ;; 1 cycle
+   \   00009B 83                    INC       B                  ;; 1 cycle
+   \   00009C A1                    INCW      AX                 ;; 1 cycle
+   \   00009D B80E                  MOVW      [SP+0x0E], AX      ;; 1 cycle
+   \   00009F 63                    MOV       A, B               ;; 1 cycle
+   \   0000A0 4C08                  CMP       A, #0x8            ;; 1 cycle
+   \   0000A2 61D8                  SKNC                         ;; 4 cycles
+   \   0000A4 ED....                BR        N:??FBG_RefreshLCD_FG_0  ;; 4 cycles
+   \   0000A7                       ; ------------------------------------- Block: 19 cycles
+    110                  FG_ClearFB();
+   \   0000A7 30....                MOVW      AX, #fbuf_FG       ;; 1 cycle
+   \   0000AA B808                  MOVW      [SP+0x08], AX      ;; 1 cycle
+   \   0000AC 30....                MOVW      AX, #fbuf_FG_prev  ;; 1 cycle
+   \   0000AF B806                  MOVW      [SP+0x06], AX      ;; 1 cycle
+   \   0000B1 30....                MOVW      AX, #fbuf_chk_fg   ;; 1 cycle
+   \   0000B4 B804                  MOVW      [SP+0x04], AX      ;; 1 cycle
+   \   0000B6 5360                  MOV       B, #0x60           ;; 1 cycle
+   \   0000B8                       ; ------------------------------------- Block: 7 cycles
+   \                     ??FBG_RefreshLCD_FG_2:
+   \   0000B8 F0                    CLRB      X                  ;; 1 cycle
+   \   0000B9 14                    MOVW      DE, AX             ;; 1 cycle
+   \   0000BA A808                  MOVW      AX, [SP+0x08]      ;; 1 cycle
+   \   0000BC 35                    XCHW      AX, DE             ;; 1 cycle
+   \   0000BD 16                    MOVW      HL, AX             ;; 1 cycle
+   \   0000BE A806                  MOVW      AX, [SP+0x06]      ;; 1 cycle
+   \   0000C0 B802                  MOVW      [SP+0x02], AX      ;; 1 cycle
+   \   0000C2 A804                  MOVW      AX, [SP+0x04]      ;; 1 cycle
+   \   0000C4 B800                  MOVW      [SP], AX           ;; 1 cycle
+   \   0000C6 17                    MOVW      AX, HL             ;; 1 cycle
+   \   0000C7                       ; ------------------------------------- Block: 10 cycles
+   \                     ??FBG_RefreshLCD_FG_3:
+   \   0000C7 89                    MOV       A, [DE]            ;; 1 cycle
+   \   0000C8 D1                    CMP0      A                  ;; 1 cycle
+   \   0000C9 16                    MOVW      HL, AX             ;; 1 cycle
+   \   0000CA DD08                  BZ        ??FBG_SetPixel_9   ;; 4 cycles
+   \   0000CC                       ; ------------------------------------- Block: 7 cycles
+   \   0000CC A802                  MOVW      AX, [SP+0x02]      ;; 1 cycle
+   \   0000CE 37                    XCHW      AX, HL             ;; 1 cycle
+   \   0000CF 9B                    MOV       [HL], A            ;; 1 cycle
+   \   0000D0 F1                    CLRB      A                  ;; 1 cycle
+   \   0000D1 99                    MOV       [DE], A            ;; 1 cycle
+   \   0000D2 EF05                  BR        S:??FBG_SetPixel_10  ;; 3 cycles
+   \   0000D4                       ; ------------------------------------- Block: 8 cycles
+   \                     ??FBG_SetPixel_9:
+   \   0000D4 A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   0000D6 37                    XCHW      AX, HL             ;; 1 cycle
+   \   0000D7 F1                    CLRB      A                  ;; 1 cycle
+   \   0000D8 9B                    MOV       [HL], A            ;; 1 cycle
+   \   0000D9                       ; ------------------------------------- Block: 4 cycles
+   \                     ??FBG_SetPixel_10:
+   \   0000D9 8A01                  MOV       A, [DE+0x01]       ;; 1 cycle
+   \   0000DB 80                    INC       X                  ;; 1 cycle
+   \   0000DC D1                    CMP0      A                  ;; 1 cycle
+   \   0000DD 16                    MOVW      HL, AX             ;; 1 cycle
+   \   0000DE DD0A                  BZ        ??FBG_SetPixel_11  ;; 4 cycles
+   \   0000E0                       ; ------------------------------------- Block: 8 cycles
+   \   0000E0 A802                  MOVW      AX, [SP+0x02]      ;; 1 cycle
+   \   0000E2 37                    XCHW      AX, HL             ;; 1 cycle
+   \   0000E3 A7                    INCW      HL                 ;; 1 cycle
+   \   0000E4 9B                    MOV       [HL], A            ;; 1 cycle
+   \   0000E5 F1                    CLRB      A                  ;; 1 cycle
+   \   0000E6 9A01                  MOV       [DE+0x01], A       ;; 1 cycle
+   \   0000E8 EF06                  BR        S:??FBG_SetPixel_12  ;; 3 cycles
+   \   0000EA                       ; ------------------------------------- Block: 9 cycles
+   \                     ??FBG_SetPixel_11:
+   \   0000EA A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   0000EC 37                    XCHW      AX, HL             ;; 1 cycle
+   \   0000ED A7                    INCW      HL                 ;; 1 cycle
+   \   0000EE F1                    CLRB      A                  ;; 1 cycle
+   \   0000EF 9B                    MOV       [HL], A            ;; 1 cycle
+   \   0000F0                       ; ------------------------------------- Block: 5 cycles
+   \                     ??FBG_SetPixel_12:
+   \   0000F0 80                    INC       X                  ;; 1 cycle
+   \   0000F1 16                    MOVW      HL, AX             ;; 1 cycle
+   \   0000F2 A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   0000F4 040200                ADDW      AX, #0x2           ;; 1 cycle
+   \   0000F7 B800                  MOVW      [SP], AX           ;; 1 cycle
+   \   0000F9 A802                  MOVW      AX, [SP+0x02]      ;; 1 cycle
+   \   0000FB 040200                ADDW      AX, #0x2           ;; 1 cycle
+   \   0000FE B802                  MOVW      [SP+0x02], AX      ;; 1 cycle
+   \   000100 17                    MOVW      AX, HL             ;; 1 cycle
+   \   000101 60                    MOV       A, X               ;; 1 cycle
+   \   000102 A5                    INCW      DE                 ;; 1 cycle
+   \   000103 4C08                  CMP       A, #0x8            ;; 1 cycle
+   \   000105 A5                    INCW      DE                 ;; 1 cycle
+   \   000106 DCBF                  BC        ??FBG_RefreshLCD_FG_3  ;; 4 cycles
+   \   000108                       ; ------------------------------------- Block: 17 cycles
+   \   000108 A804                  MOVW      AX, [SP+0x04]      ;; 1 cycle
+   \   00010A 040800                ADDW      AX, #0x8           ;; 1 cycle
+   \   00010D B804                  MOVW      [SP+0x04], AX      ;; 1 cycle
+   \   00010F A806                  MOVW      AX, [SP+0x06]      ;; 1 cycle
+   \   000111 040800                ADDW      AX, #0x8           ;; 1 cycle
+   \   000114 B806                  MOVW      [SP+0x06], AX      ;; 1 cycle
+   \   000116 A808                  MOVW      AX, [SP+0x08]      ;; 1 cycle
+   \   000118 040800                ADDW      AX, #0x8           ;; 1 cycle
+   \   00011B 93                    DEC       B                  ;; 1 cycle
+   \   00011C B808                  MOVW      [SP+0x08], AX      ;; 1 cycle
+   \   00011E DF98                  BNZ       ??FBG_RefreshLCD_FG_2  ;; 4 cycles
+   \   000120                       ; ------------------------------------- Block: 14 cycles
+    111          }
+   \   000120 1010                  ADDW      SP, #0x10          ;; 1 cycle
+   \   000122 C4                    POP       DE                 ;; 1 cycle
+   \   000123 C2                    POP       BC                 ;; 1 cycle
+   \   000124 D7                    RET                          ;; 6 cycles
+   \   000125                       ; ------------------------------------- Block: 9 cycles
+   \   000125                       ; ------------------------------------- Total: 213 cycles
+   \   000125                       REQUIRE ?CLRL78_V1_0_L00
+    112          
+    113          
+
+   \                                 In  segment CODE, align 1, keep-with-next
+    114          void FBG_SetPixel_BG(uint8_t x, uint8_t y, uint8_t color) { // Backgrounf buffer set pixel
+   \                     FBG_SetPixel_BG:
+   \   000000 C5                    PUSH      DE                 ;; 1 cycle
+   \   000001 C1                    PUSH      AX                 ;; 1 cycle
+   \   000002 74                    MOV       E, A               ;; 1 cycle
+   \   000003 62                    MOV       A, C               ;; 1 cycle
+   \   000004 75                    MOV       D, A               ;; 1 cycle
+    115          	uint8_t row = y>>3;
+   \   000005 63                    MOV       A, B               ;; 1 cycle
+   \   000006 313A                  SHR       A, 0x3             ;; 1 cycle
+   \   000008 72                    MOV       C, A               ;; 1 cycle
+    116          	if ((x < LCD_W) & (y < LCD_H)) {
+   \   000009 64                    MOV       A, E               ;; 1 cycle
+   \   00000A 4C60                  CMP       A, #0x60           ;; 1 cycle
+   \   00000C DE59                  BNC       ??FBG_SetPixel_13  ;; 4 cycles
+   \   00000E                       ; ------------------------------------- Block: 14 cycles
+   \   00000E                       ; * Stack frame (at entry) *
+   \   00000E                       ; Param size: 0
+   \   00000E                       ; Auto size: 2
+   \   00000E 63                    MOV       A, B               ;; 1 cycle
+   \   00000F 4C40                  CMP       A, #0x40           ;; 1 cycle
+   \   000011 DE54                  BNC       ??FBG_SetPixel_13  ;; 4 cycles
+   \   000013                       ; ------------------------------------- Block: 6 cycles
+   \   000013 64                    MOV       A, E               ;; 1 cycle
+   \   000014 70                    MOV       X, A               ;; 1 cycle
+   \   000015 F1                    CLRB      A                  ;; 1 cycle
+   \   000016 316D                  SHLW      AX, 0x6            ;; 1 cycle
+   \   000018 04....                ADDW      AX, #fbuf_chk      ;; 1 cycle
+   \   00001B 16                    MOVW      HL, AX             ;; 1 cycle
+   \   00001C 5102                  MOV       A, #0x2            ;; 1 cycle
+   \   00001E 61D9                  MOV       [HL+B], A          ;; 1 cycle
+    117                    fbuf_chk[x][y] = 2;
+    118                    fbuf_chk_bg[x][row] = 1;
+   \   000020 64                    MOV       A, E               ;; 1 cycle
+   \   000021 70                    MOV       X, A               ;; 1 cycle
+   \   000022 F1                    CLRB      A                  ;; 1 cycle
+   \   000023 313D                  SHLW      AX, 0x3            ;; 1 cycle
+   \   000025 04....                ADDW      AX, #fbuf_chk_bg   ;; 1 cycle
+   \   000028 16                    MOVW      HL, AX             ;; 1 cycle
+   \   000029 E1                    ONEB      A                  ;; 1 cycle
+   \   00002A 61F9                  MOV       [HL+C], A          ;; 1 cycle
+    119          		if (color) {
+   \   00002C 64                    MOV       A, E               ;; 1 cycle
+   \   00002D 70                    MOV       X, A               ;; 1 cycle
+   \   00002E F1                    CLRB      A                  ;; 1 cycle
+   \   00002F C3                    PUSH      BC                 ;; 1 cycle
+   \   000030 313D                  SHLW      AX, 0x3            ;; 1 cycle
+   \   000032 C6                    POP       HL                 ;; 1 cycle
+   \   000033 5700                  MOV       H, #0x0            ;; 1 cycle
+   \   000035 04....                ADDW      AX, #fbuf_BG       ;; 1 cycle
+   \   000038 07                    ADDW      AX, HL             ;; 1 cycle
+   \   000039 B800                  MOVW      [SP], AX           ;; 1 cycle
+   \   00003B 65                    MOV       A, D               ;; 1 cycle
+   \   00003C D1                    CMP0      A                  ;; 1 cycle
+   \   00003D 63                    MOV       A, B               ;; 1 cycle
+   \   00003E DD12                  BZ        ??FBG_SetPixel_14  ;; 4 cycles
+   \   000040                       ; ------------------------------------- Block: 33 cycles
+    120          			fbuf_BG[x][row] |= 1<<(y&0x07);
+   \   000040 5C07                  AND       A, #0x7            ;; 1 cycle
+   \   000042 E3                    ONEB      B                  ;; 1 cycle
+   \   000043 81                    INC       A                  ;; 1 cycle
+   \   000044 EF02                  BR        S:??FBG_SetPixel_15  ;; 3 cycles
+   \   000046                       ; ------------------------------------- Block: 6 cycles
+   \                     ??FBG_SetPixel_BG_0:
+   \   000046 3118                  SHL       B, 0x1             ;; 1 cycle
+   \   000048                       ; ------------------------------------- Block: 1 cycles
+   \                     ??FBG_SetPixel_15:
+   \   000048 91                    DEC       A                  ;; 1 cycle
+   \   000049 DFFB                  BNZ       ??FBG_SetPixel_BG_0  ;; 4 cycles
+   \   00004B                       ; ------------------------------------- Block: 5 cycles
+   \   00004B A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   00004D 16                    MOVW      HL, AX             ;; 1 cycle
+   \   00004E 63                    MOV       A, B               ;; 1 cycle
+   \   00004F 6D                    OR        A, [HL]            ;; 1 cycle
+   \   000050 EF14                  BR        S:??FBG_SetPixel_16  ;; 3 cycles
+   \   000052                       ; ------------------------------------- Block: 7 cycles
+    121          		} else {
+    122          			fbuf_BG[x][row] &= ~(1<<(y&0x07));
+   \                     ??FBG_SetPixel_14:
+   \   000052 5C07                  AND       A, #0x7            ;; 1 cycle
+   \   000054 E3                    ONEB      B                  ;; 1 cycle
+   \   000055 81                    INC       A                  ;; 1 cycle
+   \   000056 EF02                  BR        S:??FBG_SetPixel_17  ;; 3 cycles
+   \   000058                       ; ------------------------------------- Block: 6 cycles
+   \                     ??FBG_SetPixel_BG_1:
+   \   000058 3118                  SHL       B, 0x1             ;; 1 cycle
+   \   00005A                       ; ------------------------------------- Block: 1 cycles
+   \                     ??FBG_SetPixel_17:
+   \   00005A 91                    DEC       A                  ;; 1 cycle
+   \   00005B DFFB                  BNZ       ??FBG_SetPixel_BG_1  ;; 4 cycles
+   \   00005D                       ; ------------------------------------- Block: 5 cycles
+   \   00005D 63                    MOV       A, B               ;; 1 cycle
+   \   00005E 7CFF                  XOR       A, #0xFF           ;; 1 cycle
+   \   000060 73                    MOV       B, A               ;; 1 cycle
+   \   000061 A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   000063 16                    MOVW      HL, AX             ;; 1 cycle
+   \   000064 63                    MOV       A, B               ;; 1 cycle
+   \   000065 5D                    AND       A, [HL]            ;; 1 cycle
+   \   000066                       ; ------------------------------------- Block: 7 cycles
+   \                     ??FBG_SetPixel_16:
+   \   000066 9B                    MOV       [HL], A            ;; 1 cycle
+   \   000067                       ; ------------------------------------- Block: 1 cycles
+    123          		}
+    124          	}
+    125          }
+   \                     ??FBG_SetPixel_13:
+   \   000067 1002                  ADDW      SP, #0x2           ;; 1 cycle
+   \   000069 C4                    POP       DE                 ;; 1 cycle
+   \   00006A D7                    RET                          ;; 6 cycles
+   \   00006B                       ; ------------------------------------- Block: 8 cycles
+   \   00006B                       ; ------------------------------------- Total: 100 cycles
+   \   00006B                       REQUIRE ?CLRL78_V1_0_L00
+    126          
+    127          
+    128          // Set Pixel which allows choice of foregrond(2) and background(1) buffer
+
+   \                                 In  segment CODE, align 1, keep-with-next
+    129          void FBG_SetPixel(uint8_t x, uint8_t y, uint8_t color,int g) 
+   \                     FBG_SetPixel:
+    130          {
+   \   000000 C3                    PUSH      BC                 ;; 1 cycle
+   \   000001 C1                    PUSH      AX                 ;; 1 cycle
+   \   000002 70                    MOV       X, A               ;; 1 cycle
+    131          	uint8_t row = y>>3;
+   \   000003 63                    MOV       A, B               ;; 1 cycle
+   \   000004 313A                  SHR       A, 0x3             ;; 1 cycle
+   \   000006 72                    MOV       C, A               ;; 1 cycle
+    132                  
+    133                  if(g==2) //Foreground
+   \   000007 35                    XCHW      AX, DE             ;; 1 cycle
+   \   000008 440200                CMPW      AX, #0x2           ;; 1 cycle
+   \   00000B 35                    XCHW      AX, DE             ;; 1 cycle
+   \   00000C DF2E                  BNZ       ??FBG_SetPixel_18  ;; 4 cycles
+   \   00000E                       ; ------------------------------------- Block: 13 cycles
+   \   00000E                       ; * Stack frame (at entry) *
+   \   00000E                       ; Param size: 0
+   \   00000E                       ; Auto size: 4
+    134                  {  
+    135          	if ((x < LCD_W) & (y < LCD_H)) {
+   \   00000E 60                    MOV       A, X               ;; 1 cycle
+   \   00000F 4C60                  CMP       A, #0x60           ;; 1 cycle
+   \   000011 DE72                  BNC       ??FBG_SetPixel_19  ;; 4 cycles
+   \   000013                       ; ------------------------------------- Block: 6 cycles
+   \   000013 63                    MOV       A, B               ;; 1 cycle
+   \   000014 4C40                  CMP       A, #0x40           ;; 1 cycle
+   \   000016 DE6D                  BNC       ??FBG_SetPixel_19  ;; 4 cycles
+   \   000018                       ; ------------------------------------- Block: 6 cycles
+   \   000018 F1                    CLRB      A                  ;; 1 cycle
+   \   000019 313D                  SHLW      AX, 0x3            ;; 1 cycle
+   \   00001B 14                    MOVW      DE, AX             ;; 1 cycle
+   \   00001C 04....                ADDW      AX, #fbuf_chk_fg   ;; 1 cycle
+   \   00001F 16                    MOVW      HL, AX             ;; 1 cycle
+   \   000020 E1                    ONEB      A                  ;; 1 cycle
+   \   000021 61F9                  MOV       [HL+C], A          ;; 1 cycle
+    136                   fbuf_chk_fg[x][row] = 1;
+    137          		if (color) {
+   \   000023 C3                    PUSH      BC                 ;; 1 cycle
+   \   000024 15                    MOVW      AX, DE             ;; 1 cycle
+   \   000025 C6                    POP       HL                 ;; 1 cycle
+   \   000026 5700                  MOV       H, #0x0            ;; 1 cycle
+   \   000028 04....                ADDW      AX, #fbuf_FG       ;; 1 cycle
+   \   00002B 07                    ADDW      AX, HL             ;; 1 cycle
+   \   00002C B800                  MOVW      [SP], AX           ;; 1 cycle
+   \   00002E 63                    MOV       A, B               ;; 1 cycle
+   \   00002F 5C07                  AND       A, #0x7            ;; 1 cycle
+   \   000031 E3                    ONEB      B                  ;; 1 cycle
+   \   000032 81                    INC       A                  ;; 1 cycle
+   \   000033 EF02                  BR        S:??FBG_SetPixel_20  ;; 3 cycles
+   \   000035                       ; ------------------------------------- Block: 21 cycles
+   \                     ??FBG_SetPixel_21:
+   \   000035 3118                  SHL       B, 0x1             ;; 1 cycle
+   \   000037                       ; ------------------------------------- Block: 1 cycles
+   \                     ??FBG_SetPixel_20:
+   \   000037 91                    DEC       A                  ;; 1 cycle
+   \   000038 DFFB                  BNZ       ??FBG_SetPixel_21  ;; 4 cycles
+   \   00003A                       ; ------------------------------------- Block: 5 cycles
+   \   00003A EF33                  BR        S:??FBG_SetPixel_22  ;; 3 cycles
+   \   00003C                       ; ------------------------------------- Block: 3 cycles
+    138          			fbuf_FG[x][row] |= 1<<(y&0x07);
+    139          		} else {
+    140          			fbuf_FG[x][row] &= ~(1<<(y&0x07));
+    141          		}
+    142          	}
+    143                  }
+    144                  else if(g==1)  //Background
+   \                     ??FBG_SetPixel_18:
+   \   00003C 35                    XCHW      AX, DE             ;; 1 cycle
+   \   00003D 440100                CMPW      AX, #0x1           ;; 1 cycle
+   \   000040 15                    MOVW      AX, DE             ;; 1 cycle
+   \   000041 DF42                  BNZ       ??FBG_SetPixel_19  ;; 4 cycles
+   \   000043                       ; ------------------------------------- Block: 7 cycles
+    145                  {
+    146                    if ((x < LCD_W) & (y < LCD_H)) {
+   \   000043 60                    MOV       A, X               ;; 1 cycle
+   \   000044 4C60                  CMP       A, #0x60           ;; 1 cycle
+   \   000046 DE3D                  BNC       ??FBG_SetPixel_19  ;; 4 cycles
+   \   000048                       ; ------------------------------------- Block: 6 cycles
+   \   000048 63                    MOV       A, B               ;; 1 cycle
+   \   000049 4C40                  CMP       A, #0x40           ;; 1 cycle
+   \   00004B DE38                  BNC       ??FBG_SetPixel_19  ;; 4 cycles
+   \   00004D                       ; ------------------------------------- Block: 6 cycles
+   \   00004D F1                    CLRB      A                  ;; 1 cycle
+   \   00004E 313D                  SHLW      AX, 0x3            ;; 1 cycle
+   \   000050 14                    MOVW      DE, AX             ;; 1 cycle
+   \   000051 04....                ADDW      AX, #fbuf_chk_bg   ;; 1 cycle
+   \   000054 16                    MOVW      HL, AX             ;; 1 cycle
+   \   000055 E1                    ONEB      A                  ;; 1 cycle
+   \   000056 61F9                  MOV       [HL+C], A          ;; 1 cycle
+    147                    fbuf_chk_bg[x][row] = 1;
+    148          		if (color) {
+   \   000058 C3                    PUSH      BC                 ;; 1 cycle
+   \   000059 15                    MOVW      AX, DE             ;; 1 cycle
+   \   00005A C6                    POP       HL                 ;; 1 cycle
+   \   00005B 5700                  MOV       H, #0x0            ;; 1 cycle
+   \   00005D 04....                ADDW      AX, #fbuf_BG       ;; 1 cycle
+   \   000060 07                    ADDW      AX, HL             ;; 1 cycle
+   \   000061 B800                  MOVW      [SP], AX           ;; 1 cycle
+   \   000063 63                    MOV       A, B               ;; 1 cycle
+   \   000064 5C07                  AND       A, #0x7            ;; 1 cycle
+   \   000066 E3                    ONEB      B                  ;; 1 cycle
+   \   000067 81                    INC       A                  ;; 1 cycle
+   \   000068 EF02                  BR        S:??FBG_SetPixel_23  ;; 3 cycles
+   \   00006A                       ; ------------------------------------- Block: 21 cycles
+   \                     ??FBG_SetPixel_24:
+   \   00006A 3118                  SHL       B, 0x1             ;; 1 cycle
+   \   00006C                       ; ------------------------------------- Block: 1 cycles
+   \                     ??FBG_SetPixel_23:
+   \   00006C 91                    DEC       A                  ;; 1 cycle
+   \   00006D DFFB                  BNZ       ??FBG_SetPixel_24  ;; 4 cycles
+   \   00006F                       ; ------------------------------------- Block: 5 cycles
+   \                     ??FBG_SetPixel_22:
+   \   00006F 8802                  MOV       A, [SP+0x02]       ;; 1 cycle
+   \   000071 D1                    CMP0      A                  ;; 1 cycle
+   \   000072 DD07                  BZ        ??FBG_SetPixel_25  ;; 4 cycles
+   \   000074                       ; ------------------------------------- Block: 6 cycles
+    149          			fbuf_BG[x][row] |= 1<<(y&0x07);
+   \   000074 A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   000076 16                    MOVW      HL, AX             ;; 1 cycle
+   \   000077 63                    MOV       A, B               ;; 1 cycle
+   \   000078 6D                    OR        A, [HL]            ;; 1 cycle
+   \   000079 EF09                  BR        S:??FBG_SetPixel_26  ;; 3 cycles
+   \   00007B                       ; ------------------------------------- Block: 7 cycles
+    150          		} else {
+    151          			fbuf_BG[x][row] &= ~(1<<(y&0x07));
+   \                     ??FBG_SetPixel_25:
+   \   00007B 63                    MOV       A, B               ;; 1 cycle
+   \   00007C 7CFF                  XOR       A, #0xFF           ;; 1 cycle
+   \   00007E 73                    MOV       B, A               ;; 1 cycle
+   \   00007F A800                  MOVW      AX, [SP]           ;; 1 cycle
+   \   000081 16                    MOVW      HL, AX             ;; 1 cycle
+   \   000082 63                    MOV       A, B               ;; 1 cycle
+   \   000083 5D                    AND       A, [HL]            ;; 1 cycle
+   \   000084                       ; ------------------------------------- Block: 7 cycles
+   \                     ??FBG_SetPixel_26:
+   \   000084 9B                    MOV       [HL], A            ;; 1 cycle
+   \   000085                       ; ------------------------------------- Block: 1 cycles
+    152          		}
+    153          	}
+    154                  }
+    155          }
+   \                     ??FBG_SetPixel_19:
+   \   000085 1004                  ADDW      SP, #0x4           ;; 1 cycle
+   \   000087 D7                    RET                          ;; 6 cycles
+   \   000088                       ; ------------------------------------- Block: 7 cycles
+   \   000088                       ; ------------------------------------- Total: 129 cycles
+   \   000088                       REQUIRE ?CLRL78_V1_0_L00
+    156          
+    157          
+    158          /*
+    159          void FBG_SetPixel(uint8_t x, uint8_t y, uint8_t color) {
+    160          	uint8_t row = y>>3;
+    161          	if ((x < LCD_W) & (y < LCD_H)) {
+    162                    fbuf_chk[x][row] = 1;
+    163          		if (color) {
+    164          			fbuf[x][row] |= 1<<(y&0x07);
+    165          		} else {
+    166          			fbuf[x][row] &= ~(1<<(y&0x07));
+    167          		}
+    168          	}
+    169          }
+    170          
+    171          void FBG_Test(void) {
+    172          	uint8_t n;
+    173          
+    174          	FBG_InitFB();
+    175          	for (n=0; n<LCD_W; n++) {
+    176          		FBG_SetPixel(n, 0, 1);
+    177          		FBG_SetPixel(n, LCD_H-1, 1);
+    178          	}
+    179          
+    180          	for (n=0; n<LCD_H; n++) {
+    181          		FBG_SetPixel(n, n, 1);
+    182          		FBG_SetPixel(n, LCD_H-n-1, 1);
+    183          		FBG_SetPixel(n+(LCD_W-LCD_H), n, 1);
+    184          		FBG_SetPixel(n+(LCD_W-LCD_H), LCD_H-n-1, 1);
+    185          		FBG_SetPixel(0, n, 1);
+    186          		FBG_SetPixel(LCD_W-1, n, 1);
+    187          	}
+    188          	FBG_RefreshLCD();
+    189          }
+    190          */
+
+   Maximum stack usage in bytes:
+
+   CSTACK Function
+   ------ --------
+     14   FBG_InitFB
+     10   FBG_RefreshLCD
+       10   -> YRDKRL78_CommandSend
+       10   -> YRDKRL78_DataSend
+     12   FBG_RefreshLCD_BG
+       12   -> YRDKRL78_CommandSend
+       12   -> YRDKRL78_DataSend
+     22   FBG_RefreshLCD_FG
+       20   -> YRDKRL78_CommandSend
+       20   -> YRDKRL78_DataSend
+      4   FBG_SetPixel
+      4   FBG_SetPixel_BG
+     14   FG_ClearFB
+
+
+   Segment part sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       5  ?Subroutine0
+     105  FBG_InitFB
+      87  FBG_RefreshLCD
+     109  FBG_RefreshLCD_BG
+     293  FBG_RefreshLCD_FG
+     136  FBG_SetPixel
+     107  FBG_SetPixel_BG
+     128  FG_ClearFB
+     768  fbuf
+     768  fbuf_BG
+     768  fbuf_FG
+     768  fbuf_FG_prev
+    6144  fbuf_chk
+     768  fbuf_chk_bg
+     768  fbuf_chk_fg
+
+ 
+    970 bytes in segment CODE
+ 10 752 bytes in segment NEAR_Z
+ 
+    970 bytes of CODE memory
+ 10 752 bytes of DATA memory
+
+Errors: none
+Warnings: none
